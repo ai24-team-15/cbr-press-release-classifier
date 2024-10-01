@@ -6,9 +6,9 @@
 
 ### Участники проекта
 
-- Ковалева Александра (@ak0va) - куратор проекта
-- Жарковский Дмитрий (@KuBaN_190)
-- Иванов Иван (@ivanov_ivan_sergevich)
-- Куимов Владислав (@etoenot)
-- Кузьмин Дмитрий (@kuzda)
-- Хадиев Руслан (@firstmodelrus)
+- Ковалева Александра (@ak0va, [github](https://github.com/ak0vacorp)) - куратор проекта
+- Жарковский Дмитрий (@KuBaN_190, [github](https://github.com/KuBaN658))
+- Иванов Иван (@ivanov_ivan_sergevich, [github](https://github.com/Ivanchenko99))
+- Куимов Владислав (@etoenot, [github](https://github.com/eto-enot))
+- Кузьмин Дмитрий (@kuzda, [github](https://github.com/dkzmn))
+- Хадиев Руслан (@firstmodelrus, [github]())
