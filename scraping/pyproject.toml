@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "scraping"
+version = "0.1.0"
+description = "Получение пресс релизов"
+authors = ["KuBaN658 <garkovski_dmitri@mail.ru>"]
+
+
+[tool.poetry.dependencies]
+python = "^3.11"
+httpx = "^0.27.2"
+beautifulsoup4 = "^4.12.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
