@@ -1,3 +1,4 @@
 .python-version
 .venv
 poetry.lock
+scraping/mp_dec.csv
