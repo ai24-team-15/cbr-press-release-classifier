@@ -42,5 +42,5 @@ df = pd.DataFrame(data, columns=['date', 'link', 'title', 'release'])
 
 if not os.path.exists('../data/'):
     os.mkdir('../data')
-    
-df.to_csv('../data/cbr-press-releases.csv', index=False)
+
+df.to_csv('../data/raw-cbr-press-releases.csv', index=False)
