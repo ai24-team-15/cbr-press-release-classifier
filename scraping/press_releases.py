@@ -1,4 +1,5 @@
 import time
+import os
 
 from bs4 import BeautifulSoup
 import httpx
@@ -38,4 +39,8 @@ for i, (_, link, _) in enumerate(data):
     time.sleep(1)
 
 df = pd.DataFrame(data, columns=['date', 'link', 'title', 'release'])
+
+if not os.path.exists('../data/'):
+    os.mkdir('../data')
+    
 df.to_csv('../data/cbr-press-releases.csv', index=False)
