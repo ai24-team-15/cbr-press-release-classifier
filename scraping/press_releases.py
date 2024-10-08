@@ -38,4 +38,4 @@ for i, (_, link, _) in enumerate(data):
     time.sleep(1)
 
 df = pd.DataFrame(data, columns=['date', 'link', 'title', 'release'])
-df.to_csv('mp_dec.csv', index=False)
+df.to_csv('../data/cbr-press-releases.csv', index=False)
