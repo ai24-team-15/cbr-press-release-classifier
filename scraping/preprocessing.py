@@ -9,8 +9,11 @@ def calc_target(row):
     elif 'снизить' in row['title']:
         return -1
     else:
-        end = 120
-        if 'О ключевой ставке Банка России' in row['title']:
+        end = 150
+        
+        if ('О ключевой ставке Банка России' in row['title'] 
+            or 'О процентных ставках по операциям Банка России' in row['title']):
+
             if 'сохранить' in row['release'][:end] or 'оставить' in row['release'][:end]:
                 return 0
             elif 'повысить' in row['release'][:end]:

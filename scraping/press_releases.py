@@ -17,14 +17,15 @@ while True:
     tree = BeautifulSoup(page.text, "html.parser")
     releases = tree.select(".previews_day")
     for item in releases:
-        data_item = []
         date = item.select_one(".previews_day-date")
-        link = item.select_one("a")
+        links = item.select("a")
 
-        data_item.append(date.text)
-        data_item.append(link["href"])
-        data_item.append(link.text)
-        data.append(data_item)
+        for link in links:
+            data_item = []
+            data_item.append(date.text)
+            data_item.append(link["href"])
+            data_item.append(link.text)
+            data.append(data_item)
 
     offset += 10
     time.sleep(1)
