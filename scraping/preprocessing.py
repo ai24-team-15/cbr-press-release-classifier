@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 
 
 def calc_target(row):
@@ -22,13 +23,20 @@ def calc_target(row):
                 return -1
 
 
+def get_rate(row):
+    m = re.search(r'до\s+(\d+,?\d*)%', row.release)
+    if m is None or m.start(1) > 200:
+        m = re.search(r'(\d+,?\d*)%', row.release)
+    return float(m.group(1).replace(',', '.'))
+
+
 df = pd.read_csv('../data/raw-cbr-press-releases.csv')
 df['target'] = df.apply(calc_target, axis=1)
 
 df.dropna(subset=['target'], inplace=True)
 df.reset_index(drop=True, inplace=True)
 
-df['interest_rate'] = df.release.str.extract(r'(\d*\d,*\d*\d*%)')
+df['interest_rate'] = df.apply(get_rate, axis=1)
 
 df.target = df.target.shift(1)
 df.interest_rate = df.interest_rate.shift(1)
