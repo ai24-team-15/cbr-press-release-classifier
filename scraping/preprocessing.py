@@ -18,9 +18,14 @@ def make_preprocessing():
     df_releases['date'] = df_releases['date'].str.replace(' ноября ', '.11.')
     df_releases['date'] = df_releases['date'].str.replace(' декабря ', '.12.')
     df_releases['date'] = pd.to_datetime(df_releases['date'], dayfirst=True)
-
+    df_releases = df_releases[(df_releases['link'] != 'http://www.cbr.ru/press/pr/?file=130913_1350427l.htm') &
+                              (df_releases['link'] != 'http://www.cbr.ru/press/pr/?file=06052015_163917if2015-05-06T16_30_05.htm') &
+                              (df_releases['link'] != 'http://www.cbr.ru/press/pr/?file=11092015_160009if2015-09-11T15_43_15.htm') &
+                              (df_releases['link'] != 'http://www.cbr.ru/press/pr/?file=29122015_113403if2015-12-29T10_44_49.htm')]
+    
     df_key_rates = pd.read_csv('../data/key-rates-cbr.csv')
     df_key_rates['date'] = pd.to_datetime(df_key_rates['date'], dayfirst=True)
+
 
     df_all = df_releases.set_index('date').join(
         df_key_rates.set_index('date'), how='outer')
