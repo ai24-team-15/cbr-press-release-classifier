@@ -3,4 +3,6 @@
 poetry.lock
 scraping/mp_dec.csv
 data/
+__pycache__/
+logs/
 
