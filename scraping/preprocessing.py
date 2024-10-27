@@ -26,12 +26,18 @@ def make_preprocessing():
     df_key_rates = pd.read_csv('../data/key-rates-cbr.csv')
     df_key_rates['date'] = pd.to_datetime(df_key_rates['date'], dayfirst=True)
 
+    df_cur_usd = pd.read_csv('../data/cur-usd-cbr.csv')
+    df_cur_usd['date'] = pd.to_datetime(df_cur_usd['date'], dayfirst=True)
+
 
     df_all = df_releases.set_index('date').join(
-        df_key_rates.set_index('date'), how='outer')
+        df_key_rates.set_index('date'), how='outer').join(
+        df_cur_usd.set_index('date'), how='inner')
 
     df_all['rate_before'] = df_all['rate'].shift(1)
-    last_rate = df_all.iloc[-1]['rate']
+    last_rate = None
+    if pd.isna(df_all.iloc[-1]['release']):
+        last_rate = df_all.iloc[-1]['rate']
     df_all = df_all[~df_all['release'].isna()]
 
     df_all['rate'] = df_all['rate_before'].shift(-2)
@@ -41,6 +47,9 @@ def make_preprocessing():
     df_all = df_all.reset_index()
     df_all['days_between'] = (df_all['date'] - df_all['date'].shift(1)).dt.days
     df_all['days_between'] = df_all['days_between'].shift(-1)
+
+    df_all['usd_cur_change_relative'] = df_all['USD'] / df_all['USD'].shift(1)
+    df_all['usd_cur_change_relative'] = df_all['usd_cur_change_relative'].shift(-1)
 
     df_all['target_categorial'] = np.sign(df_all['rate'] -
                                           df_all['rate'].shift(1))

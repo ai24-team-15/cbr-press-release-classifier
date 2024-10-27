@@ -1,6 +1,7 @@
 import os
 import key_rate
 import press_releases
+import cur_usd
 import preprocessing
 from logger import logger
 
@@ -16,6 +17,10 @@ def main():
     logger.info('Получение ключевых ставок.')
     key_rate.get_key_rate()
     logger.info('Получение ключевых ставок завершено.')
+
+    logger.info('Получение курса доллара.')
+    cur_usd.get_cur_usd()
+    logger.info('Получение курса доллара завершено.')
 
     logger.info('Подготовка данных.')
     preprocessing.make_preprocessing()
