@@ -23,12 +23,17 @@ def make_preprocessing():
                               (df_releases['link'] != 'http://www.cbr.ru/press/pr/?file=11092015_160009if2015-09-11T15_43_15.htm') &
                               (df_releases['link'] != 'http://www.cbr.ru/press/pr/?file=29122015_113403if2015-12-29T10_44_49.htm')]
     
+    df_releases['date_my'] = df_releases['date'].dt.strftime('%m.%Y')
     df_key_rates = pd.read_csv('../data/key-rates-cbr.csv')
     df_key_rates['date'] = pd.to_datetime(df_key_rates['date'], dayfirst=True)
 
     df_cur_usd = pd.read_csv('../data/cur-usd-cbr.csv')
     df_cur_usd['date'] = pd.to_datetime(df_cur_usd['date'], dayfirst=True)
 
+    df_inf = pd.read_csv('../data/inflation-cbr.csv', dtype={'date_inflation': 'str', 'inflation': 'float'})
+
+    df_releases = pd.merge(df_releases, df_inf, left_on='date_my', right_on='date_inflation', how='left')
+    df_releases = df_releases.drop(['date_my', 'date_inflation'], axis=1)
 
     df_all = df_releases.set_index('date').join(
         df_key_rates.set_index('date'), how='outer').join(

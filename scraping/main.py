@@ -2,6 +2,7 @@ import os
 import key_rate
 import press_releases
 import cur_usd
+import inflation
 import preprocessing
 from logger import logger
 
@@ -21,6 +22,10 @@ def main():
     logger.info('Получение курса доллара.')
     cur_usd.get_cur_usd()
     logger.info('Получение курса доллара завершено.')
+
+    logger.info('Получение данных по инфляции.')
+    inflation.get_inflation()
+    logger.info('Получение данных по инфляции завершено.')
 
     logger.info('Подготовка данных.')
     preprocessing.make_preprocessing()
