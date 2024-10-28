@@ -32,13 +32,15 @@ def make_preprocessing():
 
     df_all = df_releases.set_index('date').join(
         df_key_rates.set_index('date'), how='outer').join(
-        df_cur_usd.set_index('date'), how='inner')
+        df_cur_usd.set_index('date'), how='left')
 
     df_all['rate_before'] = df_all['rate'].shift(1)
     last_rate = None
     if pd.isna(df_all.iloc[-1]['release']):
         last_rate = df_all.iloc[-1]['rate']
     df_all = df_all[~df_all['release'].isna()]
+
+    df_all['USD'] = df_all['USD'].bfill()
 
     df_all['rate'] = df_all['rate_before'].shift(-2)
     df_all.at[df_all.index[-2], 'rate'] = last_rate
