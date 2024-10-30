@@ -5,7 +5,11 @@ import cur_usd
 import inflation
 import preprocessing
 from logger import logger
+import sys
+from s3client import save_data_to_s3
+from config import Config
 
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 def main():
     if not os.path.exists('../data/'):
@@ -30,6 +34,13 @@ def main():
     logger.info('Подготовка данных.')
     preprocessing.make_preprocessing()
     logger.info('Подготовка данных завершена.')
+
+    logger.info('Загрузка данных в S3.')
+    save_data_to_s3(
+        access_key=Config.access_key,
+        secret_key=Config.secret_key
+    )
+    logger.info('Загрузка данных в S3 завершена.')
 
 
 if __name__ == '__main__':
