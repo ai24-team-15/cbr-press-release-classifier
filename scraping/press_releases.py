@@ -10,7 +10,6 @@ def get_press_releases() -> None:
     offset = 0
     data = []
 
-    
     while True:
         try:
             page = httpx.get(URL + str(offset))
@@ -19,7 +18,7 @@ def get_press_releases() -> None:
             logger.error(e)
             time.sleep(10)
             continue
-        
+
         if len(page.text.strip()) == 0:
             break
 
@@ -48,11 +47,11 @@ def get_press_releases() -> None:
         except Exception as e:
             logger.error(e)
             continue
-        
+
         tree = BeautifulSoup(response.text, 'html.parser')
         release = tree.find_all('div', {'class': 'landing-text'})[0]
         data[i].append(release.text.strip())
-        
+
         logger.info(f'Получен текст релиза от {data[i][0]}')
 
         time.sleep(1)
