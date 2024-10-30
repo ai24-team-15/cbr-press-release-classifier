@@ -6,7 +6,7 @@ from logger import logger
 
 
 def get_press_releases() -> None:
-    URL = 'http://www.cbr.ru/Crosscut/NewsList/LoadMore/84035?intOffset=0&extOffset='
+    URL = "http://www.cbr.ru/Crosscut/NewsList/LoadMore/84035?intOffset=0&extOffset="
     offset = 0
     data = []
 
@@ -35,7 +35,7 @@ def get_press_releases() -> None:
                 data_item.append(link.text.strip())
                 data.append(data_item)
 
-        logger.info(f'Получено {offset + len(releases)} ссылок на релизы')
+        logger.info(f"Получено {offset + len(releases)} ссылок на релизы")
 
         offset += 10
         time.sleep(1)
@@ -48,16 +48,16 @@ def get_press_releases() -> None:
             logger.error(e)
             continue
 
-        tree = BeautifulSoup(response.text, 'html.parser')
-        release = tree.find_all('div', {'class': 'landing-text'})[0]
+        tree = BeautifulSoup(response.text, "html.parser")
+        release = tree.find_all("div", {"class": "landing-text"})[0]
         data[i].append(release.text.strip())
 
-        logger.info(f'Получен текст релиза от {data[i][0]}')
+        logger.info(f"Получен текст релиза от {data[i][0]}")
 
         time.sleep(1)
 
-    df = pd.DataFrame(data, columns=['date', 'link', 'title', 'release'])
-    df.to_csv('../data/raw-cbr-press-releases.csv', index=False)
+    df = pd.DataFrame(data, columns=["date", "link", "title", "release"])
+    df.to_csv("../data/raw-cbr-press-releases.csv", index=False)
 
 
 if __name__ == "__main__":
