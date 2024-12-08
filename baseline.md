@@ -46,7 +46,7 @@
       <td>0.667893</td>
       <td>0.669919</td>
       <td>0.666111</td>
-      <td>NaN</td>
+      <td>0.745010</td>
     </tr>
     <tr>
       <th>BoW (тексты релизов) + LogReg с L1-регуляризацией</th>
@@ -120,7 +120,7 @@
       <td>0.677314</td>
       <td>0.835872</td>
     </tr>
-    <tr>
+    <tr style="background-color: yellow;">
       <th>TF-IDF (тексты релизов) + SVM</th>
       <td>0.757576</td>
       <td>0.762899</td>
