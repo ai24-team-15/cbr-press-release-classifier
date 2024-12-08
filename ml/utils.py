@@ -36,7 +36,8 @@ def calc_metrics(X, y, model, *, name, plot=True, **params):
     f1 = f1_score(y[30:], y_preds, average='macro')
     recall = recall_score(y[30:], y_preds, average='macro')
     precision = precision_score(y[30:], y_preds, average='macro')
-    roc_auc = roc_auc_score(y[30:], np.concatenate(y_preds_proba, axis=0), average='macro', multi_class='ovr')
+    roc_auc_ovr = roc_auc_score(y[30:], np.concatenate(y_preds_proba, axis=0), average='macro', multi_class='ovr')
+    roc_auc_ovo = roc_auc_score(y[30:], np.concatenate(y_preds_proba, axis=0), average='macro', multi_class='ovo')
     if plot:
         print(classification_report(y[30:], y_preds))
         cm = confusion_matrix(y[30:], y_preds)
@@ -48,9 +49,14 @@ def calc_metrics(X, y, model, *, name, plot=True, **params):
         plt.show()
 
         metrics = pd.DataFrame({
-            'accuracy': acc, 'f1': f1, 'recall': recall, 'precision': precision, 'roc_auc_ovr': roc_auc,
+            'accuracy': acc, 
+            'f1': f1, 
+            'recall': recall, 
+            'precision': precision, 
+            'roc_auc_ovr': roc_auc_ovr,
+            'roc_auc_ovo': roc_auc_ovo,
             }, index=[name])
         return metrics, model
     else:
-        return roc_auc.item(), model
+        return roc_auc_ovo.item(), model
     
