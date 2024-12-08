@@ -28,7 +28,6 @@
 
 ### Метрики исследованных моделей
 
-<style>td:last-child { font-weight: bold; }</style>
 <table border="1" class="dataframe">
   <thead>
     <tr>
