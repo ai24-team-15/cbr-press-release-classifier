@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  api:
+    build: ./cbr-api # TODO: replace
+    container_name: cbr-api
+    command: python3 cbr-api/main.py
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://api:8000"]
+    networks:
+      - cbr-network
+
+  ui:
+    build: ./cbr-ui # TODO: replace
+    container_name: cbr-ui
+    command: >
+      streamlit run cbr-ui/main.py
+      --server.port=8000
+      --logger.level=debug
+      --server.fileWatcherType=none
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://ui:8000/_stcore/health"]
+    depends_on:
+      - api
+    ports:
+      - "8000:8000"
+    environment:
+      - API_URL=http://api:8000
+    networks:
+      - cbr-network
+
+networks:
+  cbr-network:
+    driver: bridge
