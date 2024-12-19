@@ -1,0 +1,180 @@
+openapi: 3.0.0
+info:
+  title: cbr_press_release_classifier
+  version: 1.0.0
+paths:
+  /:
+    get:
+      summary: Root
+      operationId: root
+      description: Информация о статусе сервиса.
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+  /sync_data:
+    get:
+      summary: Sync Data
+      description: Запускает получение данных
+      operationId: sync_data
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncDataResponse'
+  /get_data:
+    get:
+      summary: Get Data
+      description: Данные
+      operationId: get_data
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponse'
+  /get_models:
+    get:
+      summary: Get Status
+      description: Список реализованных моделей.
+      operationId: get_status
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelsResponse'
+  /fit/{model_id}:
+    get:
+      summary: Fit
+      description: Обучает выбранную модель.
+      operationId: fit
+      parameters:
+        - name: model_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Model Id
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FitResponse'
+  /predict/{model_id}:
+    get:
+      summary: Predict
+      description: Делает прогноз с помощью выбранной модели.
+      operationId: predict
+      parameters:
+        - name: model_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Model Id
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictResponse'
+components:
+  schemas:
+    StatusResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+        - status
+      title: StatusResponse
+      example:
+        - status: Works!
+    SyncDataResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+        - status
+      title: SyncDataResponse
+      example:
+        - status: Done!   
+    DataResponse:
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              text:
+                type: string
+              key_rate:
+                type: number
+              inflation:
+                type: number
+          title: Data
+      type: object
+      required:
+        - status
+      title: DataResponse
+      example:
+        - status: Works!   
+    ModelsResponse:
+      properties:
+        models:
+          type: array
+          items:
+            type: object
+            properties:
+              model_id:
+                type: string
+              description:
+                type: string
+              fit:
+                type: boolean
+          title: Models
+      type: object
+      required:
+        - models
+      title: ModelsResponse
+      example:
+        - models:
+          - 'model_1'
+    FitResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+        - message
+      title: FitResponse
+      example:
+        - message: Model 'model_name' trained and saved    
+    PredictResponse:
+      properties:
+        prediction:
+          type: number
+          title: Prediction
+      type: object
+      required:
+        - prediction
+      title: PredictResponse
+      example:
+        - prediction: 1
