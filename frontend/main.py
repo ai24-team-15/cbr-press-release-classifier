@@ -3,9 +3,13 @@ import pandas as pd
 from plotly import express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 
 from plots import plot_pie, plot_dinamic, \
-    plot_len_text, plot_boxplot
+    plot_len_text, plot_boxplot, plot_wordcloud_all, \
+        plot_wordcloud_per_class
+from utils import get_preprocess_texts, get_freq, del_common_words, calc_common_words
 
 COLORS = {
     'Снижение ставки': '#4D6D7F',
@@ -41,14 +45,17 @@ data = data.rename(
         }
     )
 
+st.subheader('Распределение решений по ключевой ставке')
+
 st.plotly_chart(plot_pie(data, COLORS))
 
 data = df.copy()
 data['rate'] = data['rate'].shift(1)
 
+st.subheader('Изменение ставки центрального банка')
 st.plotly_chart(plot_dinamic(data))
 
-# Отображение графика
+st.subheader('Распределение длин текстов релизов')
 st.plotly_chart(plot_len_text(df))
 
 # Печать статистики
@@ -58,5 +65,32 @@ st.write(f'Самый короткий текст - {df["release"].str.len().min
 
 df['release_len'] = df.release.str.len()
 
-# Отображение графика
+st.subheader('Распределение длин текстов релизов с разделением по классам')
 st.plotly_chart(plot_boxplot(df, COLORS))
+
+texts_neg_class = get_preprocess_texts(df, -1)
+texts_zero_class = get_preprocess_texts(df, 0)
+texts_pos_class = get_preprocess_texts(df, 1)
+texts_all_class = get_preprocess_texts(df)
+
+cnt_words_neg_class = get_freq(texts_neg_class)
+cnt_words_zero_class = get_freq(texts_zero_class)
+cnt_words_pos_class = get_freq(texts_pos_class)
+cnt_words_all_classes = get_freq(texts_all_class)
+
+data = {-1: cnt_words_neg_class, 0: cnt_words_zero_class, 1: cnt_words_pos_class}
+
+common_words = calc_common_words(
+    cnt_words_neg_class, 
+    cnt_words_zero_class, 
+    cnt_words_pos_class
+    )
+
+data = del_common_words(data, common_words)
+
+st.subheader('Облако слов для всех классов')
+
+st.pyplot(plot_wordcloud_all(cnt_words_all_classes, ''))
+
+st.subheader('Облака слов с разделением по классам')
+st.pyplot(plot_wordcloud_per_class(data, ''))

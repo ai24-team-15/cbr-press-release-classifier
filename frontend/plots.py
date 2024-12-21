@@ -1,6 +1,8 @@
 import plotly.express as px
 from plotly.subplots import make_subplots
 from plotly import graph_objects as go
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
 
 def plot_pie(data, colors):
     fig = px.pie(
@@ -10,13 +12,6 @@ def plot_pie(data, colors):
             color='Решение по ключевой ставке',
             color_discrete_map=colors
         )
-
-    # Настройка заголовка, меток осей и легенды
-    fig.update_layout(
-        title='Распределение решений по ключевой ставке',
-        title_x=0.3,
-        font=dict(size=16),
-    )
 
     return fig
 
@@ -56,8 +51,7 @@ def plot_dinamic(data):
 
     # Настройка заголовка, меток осей и легенды
     fig.update_layout(
-        title='Изменение ставки центрального банка',
-        title_x=0.3,
+        title='',
         font=dict(size=16),
         xaxis_title='Дата',
         yaxis_title='Ставка / инфляция',
@@ -106,10 +100,6 @@ def plot_len_text(data):
         yaxis_title='',
         yaxis2_title='Количество наблюдений',
         font=dict(size=12),
-        title_text='Распределение длин текстов релизов',
-        title_x=0.3,
-        title_font_size=16,
-        title_font=dict(weight='bold')
     )
 
     # Удаление заголовка оси Y для верхнего подграфика
@@ -129,8 +119,6 @@ def plot_boxplot(data, colors):
 
     # Настройка заголовка, меток осей и легенды
     fig.update_layout(
-        title='Распределение длин тесктов релизов',
-        title_x=0.3,
         font=dict(size=16),
         xaxis_title='Решение по ставке',
         yaxis_title='Длина текста',
@@ -138,3 +126,51 @@ def plot_boxplot(data, colors):
 
     return fig
 
+
+def plot_wordcloud_all(data: dict, title: str):
+    fig, ax = plt.subplots()
+    wordcloud = WordCloud(
+        width=1200, 
+        height=1200, 
+        random_state=42, 
+        background_color='white', 
+        max_words=50, 
+        contour_width=2, 
+        contour_color='black'
+        ).generate_from_frequencies(data)
+
+    ax.grid(visible=False)
+    ax.axis('off')
+    plt.suptitle(
+        title, 
+    )
+    ax.imshow(wordcloud)
+    return fig
+
+
+def plot_wordcloud_per_class(data: dict[int, dict], title: str):
+    clouds = []
+    targets = [-1, 0, 1]
+    for target in targets:
+        wordcloud = WordCloud(
+                width=1200, 
+                height=1200, 
+                random_state=42, 
+                background_color='white', 
+                max_words=50, 
+                contour_width=2, 
+                contour_color='black'
+            ).generate_from_frequencies(data[target])
+        
+        clouds.append(wordcloud)
+
+    fig, axes = plt.subplots(1, 3, figsize=(28,10))
+
+    titles = ['Ставка снизится', 'Ставка не изменится', 'Ставка повысится']
+    for ax, cloud, ttl in zip(axes, clouds, titles):
+        ax.grid(visible=False)
+        ax.axis('off')
+        ax.set_title(ttl)
+        ax.imshow(cloud)
+
+    return fig
