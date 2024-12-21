@@ -1,0 +1,66 @@
+version: '3'
+
+# TODO: sudo chown -R 1000:root docker_volumes
+
+services:
+  elasticsearch:
+    image: elasticsearch:7.17.26
+    volumes:
+      - ./config/elasticsearch/config.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./docker_volumes/elasticsearch/data:/usr/share/elasticsearch/data
+    environment:
+      ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+      discovery.type: single-node
+    env_file:
+      - .env_elk
+    networks:
+      - elk-network
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  logstash:
+    image: logstash:7.17.26
+    volumes:
+      - ./config/logstash/config.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./config/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+      - ./config/logstash/pipelines:/usr/share/logstash/config/pipelines:ro
+    environment:
+      LS_JAVA_OPTS: "-Xmx512m -Xms512m"
+    env_file:
+      - .env_elk
+    ports:
+      - "5044:5044"
+      - "5000:5000"
+      - "9600:9600"
+    networks:
+      - elk-network
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: kibana:7.17.26
+    depends_on:
+      - elasticsearch
+    env_file:
+      - .env_elk
+    volumes:
+      - ./config/kibana/config.yml:/usr/share/kibana/config/kibana.yml:ro
+    networks:
+      - elk-network
+    ports:
+      - "5601:5601"
+      
+  beats:
+    image: elastic/filebeat:7.17.26
+    volumes:
+      - ./config/filebeat/config.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./logs/:/cbr_logs/:ro
+    networks:
+      - elk-network
+    depends_on:
+      - elasticsearch
+
+networks:
+  elk-network:
+    driver: bridge

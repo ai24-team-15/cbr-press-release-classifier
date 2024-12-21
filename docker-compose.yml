@@ -6,6 +6,8 @@ services:
     container_name: cbr-api
     command: python3 cbr-api/main.py
     restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://api:8000"]
     networks:
@@ -20,6 +22,8 @@ services:
       --logger.level=debug
       --server.fileWatcherType=none
     restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://ui:8000/_stcore/health"]
     depends_on:
