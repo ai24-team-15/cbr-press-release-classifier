@@ -1,13 +1,11 @@
 version: '3'
 
-# TODO: sudo chown -R 1000:root docker_volumes
-
 services:
   elasticsearch:
     image: elasticsearch:7.17.26
     volumes:
       - ./config/elasticsearch/config.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      - ./docker_volumes/elasticsearch/data:/usr/share/elasticsearch/data
+      - elasticsearch_data:/usr/share/elasticsearch/data
     environment:
       ES_JAVA_OPTS: "-Xmx512m -Xms512m"
       discovery.type: single-node
@@ -64,3 +62,6 @@ services:
 networks:
   elk-network:
     driver: bridge
+
+volumes:
+  elasticsearch_data:
