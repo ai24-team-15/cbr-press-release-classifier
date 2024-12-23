@@ -3,6 +3,7 @@ from plotly.subplots import make_subplots
 from plotly import graph_objects as go
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
+import streamlit as st
 
 def plot_pie(data, colors):
     fig = px.pie(
@@ -126,7 +127,7 @@ def plot_boxplot(data, colors):
 
     return fig
 
-
+@st.cache_resource
 def plot_wordcloud_all(data: dict, title: str):
     fig, ax = plt.subplots()
     wordcloud = WordCloud(
@@ -147,8 +148,8 @@ def plot_wordcloud_all(data: dict, title: str):
     ax.imshow(wordcloud)
     return fig
 
-
-def plot_wordcloud_per_class(data: dict[int, dict], title: str):
+@st.cache_resource
+def plot_wordcloud_per_class(data: dict[int, dict], title: str, common_words: set[str]):
     clouds = []
     targets = [-1, 0, 1]
     for target in targets:
@@ -160,7 +161,7 @@ def plot_wordcloud_per_class(data: dict[int, dict], title: str):
                 max_words=50, 
                 contour_width=2, 
                 contour_color='black'
-            ).generate_from_frequencies(data[target])
+            ).generate_from_frequencies({k: v for k, v in data[target].items() if k not in common_words})
         
         clouds.append(wordcloud)
 
@@ -173,4 +174,47 @@ def plot_wordcloud_per_class(data: dict[int, dict], title: str):
         ax.set_title(ttl)
         ax.imshow(cloud)
 
+    return fig
+
+
+def plot_linspace(X, title: str, df, colors):
+    pos_index = df[df.target_categorial == 1].index
+    neg_index = df[df.target_categorial == -1].index
+    zero_index = df[df.target_categorial == 0].index
+
+    fig = go.Figure()
+    fig.add_scatter(
+        x=X[pos_index, 0], 
+        y=X[pos_index, 1], 
+        mode='markers', 
+        text=df.date.loc[pos_index], 
+        name='Повысить',
+        marker=dict(size=10, color=colors[1]), 
+        )
+    fig.add_scatter(
+        x=X[neg_index, 0],
+        y=X[neg_index, 1], 
+        mode='markers', 
+        text=df.date.loc[neg_index], 
+        name='Понизить',
+        marker=dict(size=10, color=colors[-1]), 
+        )
+    fig.add_scatter(
+        x=X[zero_index, 0],
+        y=X[zero_index, 1],
+        mode='markers', 
+        text=df.date.loc[zero_index], 
+        name='Сохранить',
+        marker=dict(size=10, color=colors[0]), 
+        )
+    fig.update_layout(
+        showlegend=True, 
+        height=650, 
+        width=650, 
+        margin=dict(l=20,r=20,b=10,t=40),
+        title=title,
+        title_font=dict(size=18, color='black', weight='bold'),
+        title_x=0.5,
+        )
+    
     return fig

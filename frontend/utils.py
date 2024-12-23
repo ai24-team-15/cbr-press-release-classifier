@@ -8,6 +8,8 @@ import nltk
 from pymystem3 import Mystem
 from wordcloud import WordCloud
 import streamlit as st
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.manifold import TSNE
 
 
 def preprocessing_release(text: str) -> list[str]:
@@ -21,7 +23,7 @@ def preprocessing_release(text: str) -> list[str]:
     text = list(filter(lambda w: w not in stop_words and len(w) != 1, text))
     return text
 
-
+@st.cache_data
 def get_preprocess_texts(df: pd.DataFrame, class_cat: Union[int, None]=None) -> list[str]:
     if class_cat is None:
         df = df.release
@@ -32,7 +34,7 @@ def get_preprocess_texts(df: pd.DataFrame, class_cat: Union[int, None]=None) -> 
     texts = preprocessing_release(texts_raw)
     return texts
 
-
+@st.cache_data
 def get_freq(texts: list[str]) -> dict[str, float]:
     cnt_words = Counter(texts)
     num_words = sum(cnt_words.values())
@@ -40,7 +42,7 @@ def get_freq(texts: list[str]) -> dict[str, float]:
     cnt_words = dict(sorted(cnt_words.items(), key=lambda w: -w[1]))
     return cnt_words
 
-
+@st.cache_data
 def calc_common_words(*cnt_words_dic: dict, top:int=15) -> set[str]:
     result = set(list(cnt_words_dic[0].keys())[:top])
 
@@ -49,17 +51,12 @@ def calc_common_words(*cnt_words_dic: dict, top:int=15) -> set[str]:
     
     return result
 
+@st.cache_resource
+def get_vectors(df):
+    vec = TfidfVectorizer(analyzer=lambda x: x)
+    X = vec.fit_transform(df.corpus)
 
-def del_common_words(data: dict[int, dict], common_words: set[str]):
-    for word in common_words:
-        for value in data.values():
-            if word in value:
-                del value[word]
-    return data
+    tsne = TSNE(n_components=2, random_state=42)
+    X_tsne = tsne.fit_transform(X.toarray())
 
-
-
-
-
-
-
+    return X_tsne

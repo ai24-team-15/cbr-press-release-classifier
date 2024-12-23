@@ -5,11 +5,14 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.manifold import TSNE
 
 from plots import plot_pie, plot_dinamic, \
     plot_len_text, plot_boxplot, plot_wordcloud_all, \
-        plot_wordcloud_per_class
-from utils import get_preprocess_texts, get_freq, del_common_words, calc_common_words
+        plot_wordcloud_per_class, plot_linspace
+from utils import get_preprocess_texts, get_freq, \
+    preprocessing_release, calc_common_words, get_vectors
 
 COLORS = {
     'Снижение ставки': '#4D6D7F',
@@ -86,11 +89,18 @@ common_words = calc_common_words(
     cnt_words_pos_class
     )
 
-data = del_common_words(data, common_words)
-
 st.subheader('Облако слов для всех классов')
 
 st.pyplot(plot_wordcloud_all(cnt_words_all_classes, ''))
 
 st.subheader('Облака слов с разделением по классам')
-st.pyplot(plot_wordcloud_per_class(data, ''))
+st.pyplot(plot_wordcloud_per_class(data, '', common_words))
+
+df['corpus'] = df.release.apply(preprocessing_release)
+
+X_tsne = get_vectors(df)
+
+st.subheader('Представление пресс-релизов в двумерном пространстве')
+fig = plot_linspace(X_tsne, title='', df=df, colors=COLORS)
+
+st.plotly_chart(fig)
