@@ -3,13 +3,21 @@ from typing import Union
 from collections import Counter
 
 import pandas as pd
-import matplotlib.pyplot as plt
 import nltk
 from pymystem3 import Mystem
-from wordcloud import WordCloud
 import streamlit as st
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.manifold import TSNE
+
+
+COLORS = {
+    'Снижение ставки': '#4D6D7F',
+    'Сохранение ставки': '#1A4E1A',
+    'Повышение ставки': '#A03B2A',
+    -1: '#4D6D7F',
+    1: '#1A4E1A',
+    0: '#A03B2A'
+}
 
 
 def preprocessing_release(text: str) -> list[str]:
