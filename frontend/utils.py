@@ -19,7 +19,7 @@ COLORS = {
     0: '#A03B2A'
 }
 
-
+@st.cache_resource
 def preprocessing_release(text: str) -> list[str]:
     stop_words = set(nltk.corpus.stopwords.words('russian'))
     regex = re.compile('[^а-я ]')

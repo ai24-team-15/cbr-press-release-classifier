@@ -2,12 +2,13 @@ import streamlit as st
 
 from utils import get_preprocess_texts, get_freq, calc_common_words
 from plots import plot_wordcloud_all, plot_wordcloud_per_class
-from data import DATA
 
-texts_neg_class = get_preprocess_texts(DATA, -1)
-texts_zero_class = get_preprocess_texts(DATA, 0)
-texts_pos_class = get_preprocess_texts(DATA, 1)
-texts_all_class = get_preprocess_texts(DATA)
+data = st.session_state['data']
+
+texts_neg_class = get_preprocess_texts(data, -1)
+texts_zero_class = get_preprocess_texts(data, 0)
+texts_pos_class = get_preprocess_texts(data, 1)
+texts_all_class = get_preprocess_texts(data)
 
 cnt_words_neg_class = get_freq(texts_neg_class)
 cnt_words_zero_class = get_freq(texts_zero_class)

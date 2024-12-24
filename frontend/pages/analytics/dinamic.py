@@ -1,9 +1,8 @@
 import streamlit as st
 
-from data import DATA
 from plots import plot_dinamic
 
-data = DATA.copy()
+data = st.session_state['data'].copy()
 
 data['rate'] = data['rate'].shift(1)
 

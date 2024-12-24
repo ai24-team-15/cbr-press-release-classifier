@@ -2,11 +2,11 @@ import streamlit as st
 
 from plots import plot_pie
 from utils import COLORS
-from data import DATA
 
 st.subheader('Распределение решений по ключевой ставке')
 
-df = DATA.groupby('target_categorial_name').title.count()
+data = st.session_state['data']
+df = data.groupby('target_categorial_name').title.count()
 df = df / df.sum()
 df = df.reset_index()
 

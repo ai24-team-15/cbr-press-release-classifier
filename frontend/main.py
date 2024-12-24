@@ -55,11 +55,9 @@ pg = st.navigation(
     }
 )
 
-
 st.set_page_config(
         page_title="checkpoint 4", 
         # page_icon=":material/edit:"
     )
-
 
 pg.run()

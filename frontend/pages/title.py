@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 
 st.title("Классификатор пресс-релизов ЦБ с предсказанием будущей ключевой ставки")
@@ -12,3 +13,22 @@ st.write("""ЦБ каждый раз после заседания по ключ
 после на следующем заседании: ЦБ ее поднимет, опустит или оставит неизменной. 
 Мы создали классификатор, который разделяет тексты релизов на 3 класса: -1 
 (ставка опустится), 0 (останется неизменной), 1 (ставку повысят).""")
+
+
+if upload_file:= st.file_uploader("Выберите файл с данными", type='csv'):
+    DATA = pd.read_csv(upload_file)
+    
+else:
+    DATA = pd.read_csv('../data/cbr-press-releases.csv')
+
+
+DATA['target_categorial_name'] = DATA.target_categorial.map(
+        {
+            -1: 'Снижение ставки', 
+            1: 'Повышение ставки', 
+            0: 'Сохранение ставки'
+        }
+    )
+st.session_state['data'] = DATA
+
+st.dataframe(st.session_state.data)
