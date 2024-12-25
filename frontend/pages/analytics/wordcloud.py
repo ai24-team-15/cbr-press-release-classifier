@@ -1,10 +1,16 @@
 import streamlit as st
+import logging 
 
 from utils import get_preprocess_texts, get_freq, calc_common_words
 from plots import plot_wordcloud_all, plot_wordcloud_per_class
+from config import configure_logging
+
+configure_logging()
+logger = logging.getLogger(__name__)
 
 data = st.session_state['data']
 
+logger.info('Начало построения облаков слов.')
 texts_neg_class = get_preprocess_texts(data, -1)
 texts_zero_class = get_preprocess_texts(data, 0)
 texts_pos_class = get_preprocess_texts(data, 1)
@@ -29,3 +35,4 @@ st.pyplot(plot_wordcloud_all(cnt_words_all_classes, ''))
 
 st.subheader('Облака слов с разделением по классам')
 st.pyplot(plot_wordcloud_per_class(data, '', common_words))
+logger.info('Облака слов построены.')
