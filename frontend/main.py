@@ -1,5 +1,24 @@
+import os
+import logging
+import asyncio
+
 import streamlit as st
 
+from utils import download_file
+from config import configure_logging
+
+
+configure_logging()
+logger = logging.getLogger(__name__)
+
+if not os.path.exists('./data/cbr-press-releases.csv'):
+    logger.info("Загрузка данных из s3.")
+    asyncio.run(
+    download_file(
+        'https://storage.yandexcloud.net/cbr-press-release-classifier/cbr-press-releases.csv',
+        './data/cbr-press-releases.csv'
+    ))   
+    logger.info('Загрузка данных из s3 завершена.')
 
 title_page = st.Page(
     "pages/title.py",

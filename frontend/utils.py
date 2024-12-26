@@ -1,6 +1,8 @@
 import re
 from typing import Union
 from collections import Counter
+import asyncio
+import os
 
 import pandas as pd
 import nltk
@@ -8,6 +10,7 @@ from pymystem3 import Mystem
 import streamlit as st
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.manifold import TSNE
+import aiohttp
 
 
 COLORS = {
@@ -68,3 +71,15 @@ def get_vectors(df):
     X_tsne = tsne.fit_transform(X.toarray())
 
     return X_tsne
+
+
+async def download_file(url, filename):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            os.makedirs("data", exist_ok=True)
+            with open(filename, 'wb') as f:
+                while True:
+                    chunk = await response.content.read(1024)
+                    if not chunk:
+                        break
+                    f.write(chunk)

@@ -41,15 +41,15 @@ if upload_file:= st.file_uploader("Выберите файл с данными",
     if 'release' not in columns:
         logger.error("Файл не содержит столбца 'release'.")
         st.error("Ошибка: Файл должен содержать столбец 'release' с текстами.")
-        DATA = pd.read_csv('../data/cbr-press-releases.csv')
+        DATA = pd.read_csv('./data/cbr-press-releases.csv')
 
     if 'target_categorial' not in columns:
         logger.error("Файл не содержит столбца 'target_categorial'.")
         st.error("Ошибка: Файл должен содержать столбец 'target_categorial'.")
-        DATA = pd.read_csv('../data/cbr-press-releases.csv')
+        DATA = pd.read_csv('./data/cbr-press-releases.csv')
 
 else:
-    DATA = pd.read_csv('../data/cbr-press-releases.csv')
+    DATA = pd.read_csv('./data/cbr-press-releases.csv')
 
 DATA['target_categorial_name'] = DATA.target_categorial.map(
         {
