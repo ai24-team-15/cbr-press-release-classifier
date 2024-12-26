@@ -126,7 +126,6 @@ def plot_boxplot(data, colors):
     )
 
     return fig
-
 @st.cache_resource
 def plot_wordcloud_all(data: dict, title: str):
     fig, ax = plt.subplots()
@@ -151,7 +150,7 @@ def plot_wordcloud_all(data: dict, title: str):
 @st.cache_resource
 def plot_wordcloud_per_class(data: dict[int, dict], title: str, common_words: set[str]):
     clouds = []
-    targets = [-1, 0, 1]
+    targets = data.keys()
     for target in targets:
         wordcloud = WordCloud(
                 width=1200, 
@@ -165,7 +164,7 @@ def plot_wordcloud_per_class(data: dict[int, dict], title: str, common_words: se
         
         clouds.append(wordcloud)
 
-    fig, axes = plt.subplots(1, 3, figsize=(28,10))
+    fig, axes = plt.subplots(1, len(data.keys()), figsize=(28,10))
 
     titles = ['Ставка снизится', 'Ставка не изменится', 'Ставка повысится']
     for ax, cloud, ttl in zip(axes, clouds, titles):

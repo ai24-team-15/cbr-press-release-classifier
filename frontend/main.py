@@ -1,15 +1,22 @@
 import os
 import logging
 import asyncio
+import pickle
 
 import streamlit as st
+import pandas as pd
 
-from utils import download_file
+from utils import download_file, get_data_for_wordclouds, get_vectors, preprocessing_release
 from config import configure_logging
 
 
 configure_logging()
 logger = logging.getLogger(__name__)
+
+st.set_page_config(
+        page_title="checkpoint 4", 
+        # page_icon=":material/edit:"
+    )
 
 if not os.path.exists('./data/cbr-press-releases.csv'):
     logger.info("Загрузка данных из s3.")
@@ -19,6 +26,23 @@ if not os.path.exists('./data/cbr-press-releases.csv'):
         './data/cbr-press-releases.csv'
     ))   
     logger.info('Загрузка данных из s3 завершена.')
+
+if not os.path.exists('./data/data_wordclouds.pkl'):
+    logger.info('Подготовка данных для построения облаков слов.')
+    data = pd.read_csv('./data/cbr-press-releases.csv')
+    data_wordclouds = get_data_for_wordclouds(data)
+    with open('./data/data_wordclouds.pkl', 'wb') as f:
+        pickle.dump(data_wordclouds, f)
+    logger.info('Подготовка данных для построения облаков слов завершена.')
+
+if not os.path.exists('./data/data_tsne.pkl'):
+    logger.info('Подготовка данных для построения t-SNE.')
+    data = pd.read_csv('./data/cbr-press-releases.csv')
+    data['corpus'] = data.release.map(preprocessing_release)
+    X_tsne = get_vectors(data)
+    with open('./data/data_tsne.pkl', 'wb') as f:
+        pickle.dump(X_tsne, f)
+    logger.info('Подготовка данных для построения t-SNE завершена.')
 
 title_page = st.Page(
     "pages/title.py",
@@ -73,10 +97,5 @@ pg = st.navigation(
         "Модель": [model_page],
     }
 )
-
-st.set_page_config(
-        page_title="checkpoint 4", 
-        # page_icon=":material/edit:"
-    )
 
 pg.run()

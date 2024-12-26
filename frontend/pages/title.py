@@ -28,38 +28,38 @@ st.write("""Для того, чтобы протестировать модел�
 
 st.header("Загрузка данных")
 
+st.session_state['other_data'] = False
+
+data = pd.read_csv('./data/cbr-press-releases.csv')
+st.session_state['data'] = data
+
 if upload_file:= st.file_uploader("Выберите файл с данными", type='csv'):
-    DATA = pd.read_csv(upload_file)
+    data = pd.read_csv(upload_file)
+    st.session_state['other_data'] = True
 
     logger.info(
         "Файл: %s загружен.",
         upload_file.name
     )
 
-    columns = set(DATA.columns)
+    columns = set(data.columns)
 
     if 'release' not in columns:
         logger.error("Файл не содержит столбца 'release'.")
         st.error("Ошибка: Файл должен содержать столбец 'release' с текстами.")
-        DATA = pd.read_csv('./data/cbr-press-releases.csv')
+        st.session_state['other_data'] = False
 
     if 'target_categorial' not in columns:
         logger.error("Файл не содержит столбца 'target_categorial'.")
         st.error("Ошибка: Файл должен содержать столбец 'target_categorial'.")
-        DATA = pd.read_csv('./data/cbr-press-releases.csv')
+        st.session_state['other_data'] = False
 
-else:
-    DATA = pd.read_csv('./data/cbr-press-releases.csv')
+    if st.session_state['other_data']:
+        st.session_state['data'] = data
 
-DATA['target_categorial_name'] = DATA.target_categorial.map(
-        {
-            -1: 'Снижение ставки', 
-            1: 'Повышение ставки', 
-            0: 'Сохранение ставки'
-        }
-    )
+data = st.session_state['data']
 
-st.session_state['data'] = DATA
+st.session_state['data'] = data
 
 st.subheader("Используемые данные")
 st.dataframe(st.session_state.data)

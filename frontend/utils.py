@@ -5,6 +5,7 @@ import asyncio
 import os
 
 import pandas as pd
+import numpy as np
 import nltk
 from pymystem3 import Mystem
 import streamlit as st
@@ -21,6 +22,12 @@ COLORS = {
     1: '#1A4E1A',
     0: '#A03B2A'
 }
+
+CATEGORIAL_NAMES = {
+            -1: 'Снижение ставки', 
+            1: 'Повышение ставки', 
+            0: 'Сохранение ставки'
+        }
 
 @st.cache_resource
 def preprocessing_release(text: str) -> list[str]:
@@ -83,3 +90,23 @@ async def download_file(url, filename):
                     if not chunk:
                         break
                     f.write(chunk)
+
+
+def get_data_for_wordclouds(data):
+    frequencies = {}
+    unique_target = data.target_categorial.unique()
+    unique_target = unique_target[~np.isnan(unique_target)]
+
+    for target in unique_target:
+        frequencies[target] = get_preprocess_texts(data, target)
+
+    texts_all_class = get_preprocess_texts(data)
+
+    for target in unique_target:
+        frequencies[target] = get_freq(frequencies[target])
+
+    cnt_words_all_classes = get_freq(texts_all_class)
+
+    common_words = calc_common_words(*frequencies.values())
+    
+    return {'data': frequencies, 'common_words': common_words, 'cnt_words_all_classes': cnt_words_all_classes}

@@ -1,5 +1,6 @@
 import streamlit as st
 import logging
+import pandas as pd
 
 from plots import plot_dinamic
 from config import configure_logging
@@ -7,7 +8,12 @@ from config import configure_logging
 configure_logging()
 logger = logging.getLogger(__name__)
 
-data = st.session_state['data'].copy()
+if 'data' in st.session_state:
+    data = st.session_state['data'].copy()
+else:
+    data = pd.read_csv('./data/cbr-press-releases.csv')
+    st.session_state['data'] = data.copy()
+    st.session_state['other_data'] = False
 
 data['rate'] = data['rate'].shift(1)
 

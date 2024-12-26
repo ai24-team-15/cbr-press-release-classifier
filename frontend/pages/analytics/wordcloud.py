@@ -1,33 +1,31 @@
 import streamlit as st
-import logging 
+import logging
+import pickle 
+import pandas as pd
 
-from utils import get_preprocess_texts, get_freq, calc_common_words
+from utils import get_preprocess_texts, get_freq, calc_common_words, get_data_for_wordclouds
 from plots import plot_wordcloud_all, plot_wordcloud_per_class
 from config import configure_logging
 
 configure_logging()
 logger = logging.getLogger(__name__)
 
-data = st.session_state['data']
+if 'data' not in st.session_state:
+    data = pd.read_csv('./data/cbr-press-releases.csv')
+    st.session_state['data'] = data
+    st.session_state['other_data'] = False
 
-logger.info('Начало построения облаков слов.')
-texts_neg_class = get_preprocess_texts(data, -1)
-texts_zero_class = get_preprocess_texts(data, 0)
-texts_pos_class = get_preprocess_texts(data, 1)
-texts_all_class = get_preprocess_texts(data)
+logger.info("Начало построения облака слов.")
+if st.session_state['other_data'] == True:
+    data_wordclouds = get_data_for_wordclouds(st.session_state['data'])
 
-cnt_words_neg_class = get_freq(texts_neg_class)
-cnt_words_zero_class = get_freq(texts_zero_class)
-cnt_words_pos_class = get_freq(texts_pos_class)
-cnt_words_all_classes = get_freq(texts_all_class)
+else:
+    with open('./data/data_wordclouds.pkl', 'rb') as f:
+        data_wordclouds = pickle.load(f)
 
-data = {-1: cnt_words_neg_class, 0: cnt_words_zero_class, 1: cnt_words_pos_class}
-
-common_words = calc_common_words(
-    cnt_words_neg_class, 
-    cnt_words_zero_class, 
-    cnt_words_pos_class
-    )
+data = data_wordclouds['data']
+common_words = data_wordclouds['common_words']
+cnt_words_all_classes = data_wordclouds['cnt_words_all_classes']
 
 st.subheader('Облако слов для всех классов')
 
