@@ -13,6 +13,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.manifold import TSNE
 import aiohttp
 
+nltk.download('stopwords')
 
 COLORS = {
     'Снижение ставки': '#4D6D7F',
