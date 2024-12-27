@@ -1,81 +1,47 @@
-import os
 import uvicorn
-from typing import Optional, Union
 from fastapi import FastAPI
-from models import (
-    DataResponse,
-    FitResponse,
-    ModelsResponse,
-    PredictResponse,
-    StatusResponse,
-    SyncDataResponse,
+from contextlib import asynccontextmanager
+import logging
+from router import router
+from settings import settings
+from utils import (
+    load_data_from_file,
+    load_models_from_file,
+    save_data_to_file,
+    save_models_to_file,
 )
 
 
-if not os.path.exists("../data/"):
-    os.mkdir("../data")
+logging.basicConfig(
+    handlers=[logging.handlers.RotatingFileHandler(f"{settings.logs_path}/cbr_service.log", maxBytes=1000000)],
+    format="%(asctime)s %(levelname)-8s %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=logging.INFO,
+)
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logging.info("Запуск сервиса")
+    app.data = load_data_from_file()
+    app.ml_models = load_models_from_file()
+    yield
+    save_data_to_file(app.data)
+    save_models_to_file(app.ml_models)
+    logging.info("Остановка сервиса")
 
 
 app = FastAPI(
-    title='cbr_press_release_classifier',
-    version='1.0.0',
+    title="cbr_press_release_classifier",
+    version="1.0.0",
+    lifespan=lifespan,
 )
 
-
-@app.get('/', response_model=StatusResponse)
-def root() -> StatusResponse:
-    """
-    Root
-    """
-    return StatusResponse(status='Works!')
+app.ml_models = {}
+app.data = []
 
 
-@app.get(
-    '/fit/{model_id}', response_model=None, responses={'201': {'model': FitResponse}}
-)
-def fit(model_id: str) -> Optional[FitResponse]:
-    """
-    Fit
-    """
-    pass
-
-
-@app.get('/get_data', response_model=DataResponse)
-def get_data() -> DataResponse:
-    """
-    Get Data
-    """
-    pass
-
-
-@app.get('/get_models', response_model=ModelsResponse)
-def get_status() -> ModelsResponse:
-    """
-    Get Status
-    """
-    pass
-
-
-@app.get(
-    '/predict/{model_id}',
-    response_model=None,
-    responses={'201': {'model': PredictResponse}},
-)
-def predict(model_id: str) -> Optional[PredictResponse]:
-    """
-    Predict
-    """
-    pass
-
-
-@app.get('/sync_data', response_model=SyncDataResponse)
-def sync_data() -> SyncDataResponse:
-    """
-    Sync Data
-    """
-    pass
-
+app.include_router(router)
 
 
 if __name__ == "__main__":
