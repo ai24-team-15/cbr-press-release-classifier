@@ -3,9 +3,9 @@ import streamlit as st
 import logging
 import pandas as pd
 
-from utils import get_vectors, COLORS, preprocessing_release
-from plots import plot_linspace
-from config import configure_logging
+from tools.utils import get_vectors, COLORS, preprocessing_release
+from tools.plots import plot_linspace
+from tools.config import configure_logging
 
 configure_logging()
 logger = logging.getLogger(__name__)

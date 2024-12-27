@@ -2,9 +2,9 @@ import streamlit as st
 import logging
 import pandas as pd
 
-from plots import plot_pie
-from utils import COLORS, CATEGORIAL_NAMES
-from config import configure_logging
+from tools.plots import plot_pie
+from tools.utils import COLORS, CATEGORIAL_NAMES
+from tools.config import configure_logging
 
 configure_logging()
 logger = logging.getLogger(__name__)

@@ -3,9 +3,9 @@ import logging
 import pickle 
 import pandas as pd
 
-from utils import get_preprocess_texts, get_freq, calc_common_words, get_data_for_wordclouds
-from plots import plot_wordcloud_all, plot_wordcloud_per_class
-from config import configure_logging
+from tools.utils import get_preprocess_texts, get_freq, calc_common_words, get_data_for_wordclouds
+from tools.plots import plot_wordcloud_all, plot_wordcloud_per_class
+from tools.config import configure_logging
 
 configure_logging()
 logger = logging.getLogger(__name__)

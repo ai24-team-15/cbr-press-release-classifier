@@ -3,7 +3,7 @@ import logging
 import streamlit as st
 import pandas as pd
 
-from config import configure_logging
+from tools.config import configure_logging
 
 
 configure_logging()

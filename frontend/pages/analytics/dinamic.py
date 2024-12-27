@@ -2,8 +2,8 @@ import streamlit as st
 import logging
 import pandas as pd
 
-from plots import plot_dinamic
-from config import configure_logging
+from tools.plots import plot_dinamic
+from tools.config import configure_logging
 
 configure_logging()
 logger = logging.getLogger(__name__)
