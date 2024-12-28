@@ -6,8 +6,8 @@ import pickle
 import streamlit as st
 import pandas as pd
 
-from utils import download_file, get_data_for_wordclouds, get_vectors, preprocessing_release
-from config import configure_logging
+from tools.utils import download_file, get_data_for_wordclouds, get_vectors, preprocessing_release
+from tools.config import configure_logging
 
 
 configure_logging()
@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 
 st.set_page_config(
         page_title="checkpoint 4", 
-        # page_icon=":material/edit:"
     )
 
 if not os.path.exists('./data/cbr-press-releases.csv'):
@@ -52,37 +51,36 @@ title_page = st.Page(
 pie_page = st.Page(
     "pages/analytics/pie.py", 
     title="Распределение решений", 
-    # icon=":material/add_circle:"
     )
 
 dinamic_page = st.Page(
     "pages/analytics/dinamic.py", 
     title="Динамика ставки", 
-    # icon=":material/add_circle:"
     )
 
 length_text_page = st.Page(
     "pages/analytics/length_text.py", 
     title="Анализ длины текстов", 
-    # icon=":material/add_circle:"
     )
 
 wordcloud_page = st.Page(
     "pages/analytics/wordcloud.py", 
     title="Облака слов", 
-    # icon=":material/add_circle:"
     )
 
 tsne_page = st.Page(
     "pages/analytics/tsne.py", 
     title="t-SNE визуализация", 
-    # icon=":material/add_circle:"
     )
 
-model_page = st.Page(
-    "pages/model.py", 
-    title="Модель", 
-    # icon=":material/delete:"
+fit_page = st.Page(
+    "pages/machine_learning/fit.py", 
+    title="Обучение модели", 
+    )
+
+predict_page = st.Page(
+    "pages/machine_learning/predict.py", 
+    title="Предсказание", 
     )
 
 pg = st.navigation(
@@ -94,7 +92,7 @@ pg = st.navigation(
             wordcloud_page, 
             tsne_page
             ],
-        "Модель": [model_page],
+        "Машинное обучение": [fit_page, predict_page],
     }
 )
 

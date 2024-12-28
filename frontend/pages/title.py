@@ -1,9 +1,11 @@
 import logging
+import asyncio
 
 import streamlit as st
 import pandas as pd
 
 from tools.config import configure_logging
+from tools.api import client
 
 
 configure_logging()
@@ -57,9 +59,9 @@ if upload_file:= st.file_uploader("Выберите файл с данными",
     if st.session_state['other_data']:
         st.session_state['data'] = data
 
-data = st.session_state['data']
-
-st.session_state['data'] = data
+res = asyncio.run(
+    client.load_data('/load_data', st.session_state['data'])
+    )
 
 st.subheader("Используемые данные")
 st.dataframe(st.session_state.data)
