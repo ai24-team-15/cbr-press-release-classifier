@@ -1,56 +1,77 @@
-import os
 import json
+from typing import Any, Dict, List
 
 import aiohttp
 
 
 class ApiClient:
-    def __init__(self, base_url):
-        self.base_url = base_url
-        self.headers = {"Content-Type": "application/json"}
+    """
+    Клиент для взаимодействия с REST API.
 
-    async def get_models(self, url):
+    :param base_url: Базовый URL для API.
+    """
+    def __init__(self, base_url: str):
+        self.base_url: str = base_url
+        self.headers: Dict[str, str] = {"Content-Type": "application/json"}
+
+    async def get_models(self, url: str) -> List[str]:
+        """
+        Получает список моделей из API.
+
+        :param url: Путь к API для получения списка моделей.
+        :return: Список идентификаторов моделей.
+        """
         async with aiohttp.ClientSession() as session:
-            url = self.base_url + url
-            async with session.get(url) as response:
+            full_url = self.base_url + url
+            async with session.get(full_url) as response:
                 models = await response.json()
                 return models['models']
-            
-    async def predict(self, url, model_id):
-        url = self.base_url + url
+
+    async def predict(self, url: str, model_id: str) -> Dict[str, Any]:
+        """
+        Запрашивает предсказание от указанной модели.
+
+        :param url: Путь к API для предсказания.
+        :param model_id: Идентификатор модели.
+        :return: Ответ от API с результатами предсказания.
+        """
+        full_url = self.base_url + url
         async with aiohttp.ClientSession() as session:
-            async with session.get(f'{url}/{model_id}') as response:
+            async with session.get(f'{full_url}/{model_id}') as response:
                 answer = await response.json()
                 return answer
-            
-    async def load_data(self, url, data):        
+
+    async def load_data(self, url: str, data: Any) -> Dict[str, Any]:
+        """
+        Загружает данные в API.
+
+        :param url: Путь к API для загрузки данных.
+        :param data: Данные в формате pandas DataFrame.
+        :return: Ответ от API после загрузки данных.
+        """
         async with aiohttp.ClientSession() as session:
-            url = self.base_url + url
-            payload = data.to_json(orient='records')
+            full_url = self.base_url + url
+            payload = data.to_json(orient='records')  # Преобразование данных в JSON
             payload = json.loads(payload)
-            payload = {'data': payload[:-1]}
-            async with session.post(url, headers=self.headers, json=payload) as response:
+            payload = {'data': payload[:-1]}  # Исключение последней записи (если необходимо)
+            async with session.post(full_url, headers=self.headers, json=payload) as response:
                 ans = await response.json()
                 return ans
-            
-    async def fit(self, url, payload):
+
+    async def fit(self, url: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Отправляет запрос на обучение модели с заданными данными.
+
+        :param url: Путь к API для обучения модели.
+        :param payload: Данные для обучения в формате словаря.
+        :return: Ответ от API после обучения.
+        """
         async with aiohttp.ClientSession() as session:
-            url = self.base_url + url
-            async with session.post(url, headers=self.headers, json=payload) as response:
+            full_url = self.base_url + url
+            async with session.post(full_url, headers=self.headers, json=payload) as response:
                 ans = await response.json()
                 return ans
-            
+
+
+# Создание экземпляра клиента с базовым URL
 client = ApiClient('http://0.0.0.0:8000')
-
-    # def post(self, endpoint, **kwargs):
-    #     """POST запрос с базовым URL."""
-    #     url = f"{self.base_url.rstrip('/')}/{endpoint.lstrip('/')}"
-    #     return self.session.post(url, **kwargs)
-
-
-
-# async def get_models(url):
-#     async with aiohttp.ClientSession() as session:
-#         async with session.get(url) as response:
-#             models = await response.json()
-#             return models
