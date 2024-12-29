@@ -50,6 +50,7 @@ def test_send_from_file():
     """
     Тестирует загрузку данных из файла
     """
+    print("\nTest load data from file")
     r = httpx.get(SERVER_NAME + "get_data")
     assert r.status_code == 200
 
