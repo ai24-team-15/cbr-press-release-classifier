@@ -24,8 +24,7 @@ if not os.path.exists('./data/cbr-press-releases.csv'):
     logger.info("Загрузка данных из S3.")
     asyncio.run(
         download_file(
-            'https://storage.yandexcloud.net/cbr-press-release-classifier\
-                /cbr-press-releases.csv',
+            'https://storage.yandexcloud.net/cbr-press-release-classifier/cbr-press-releases.csv',
             './data/cbr-press-releases.csv'
         )
     )
