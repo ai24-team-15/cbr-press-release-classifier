@@ -1,5 +1,4 @@
 import os
-import logging
 import asyncio
 import pickle
 
@@ -8,11 +7,8 @@ import pandas as pd
 
 from tools.utils import download_file, get_data_for_wordclouds, \
     get_vectors, preprocessing_release
-from tools.config import configure_logging
+from tools.config import log as logger
 
-# Настройка логирования
-configure_logging()
-logger = logging.getLogger(__name__)
 
 # Конфигурация страницы Streamlit
 st.set_page_config(
@@ -22,18 +18,24 @@ st.set_page_config(
 # Проверяем наличие файла с данными. Если его нет, загружаем из S3
 if not os.path.exists('./data/cbr-press-releases.csv'):
     logger.info("Загрузка данных из S3.")
-    asyncio.run(
-        download_file(
-            'https://storage.yandexcloud.net/cbr-press-release-classifier/cbr-press-releases.csv',
-            './data/cbr-press-releases.csv'
+    try:
+        asyncio.run(
+            download_file(
+                'https://storage.yandexcloud.net/cbr-press-release-classifier/cbr-press-releases.csv',
+                './data/cbr-press-releases.csv'
+            )
         )
-    )
+    except Exception as e:
+        logger.error("Ошибка при загрузке данных из S3: %s", e)
+        raise e
     logger.info('Загрузка данных из S3 завершена.')
+
+# Загружаем данные пресс-релизов
+data = pd.read_csv('./data/cbr-press-releases.csv')
 
 # Проверяем наличие файла с данными для облаков слов. Если его нет, создаём
 if not os.path.exists('./data/data_wordclouds.pkl'):
     logger.info('Подготовка данных для построения облаков слов.')
-    data = pd.read_csv('./data/cbr-press-releases.csv')
     data_wordclouds = get_data_for_wordclouds(data)
     with open('./data/data_wordclouds.pkl', 'wb') as f:
         pickle.dump(data_wordclouds, f)
@@ -42,7 +44,6 @@ if not os.path.exists('./data/data_wordclouds.pkl'):
 # Проверяем наличие файла с данными для t-SNE. Если его нет, создаём
 if not os.path.exists('./data/data_tsne.pkl'):
     logger.info('Подготовка данных для построения t-SNE.')
-    data = pd.read_csv('./data/cbr-press-releases.csv')
     data['corpus'] = data['release'].map(preprocessing_release)
     X_tsne = get_vectors(data)
     with open('./data/data_tsne.pkl', 'wb') as f:
