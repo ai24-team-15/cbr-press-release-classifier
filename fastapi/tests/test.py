@@ -1,9 +1,12 @@
-import httpx
 from csv import DictReader
 import json
+import httpx
 
 
-def load_data_from_file(filename):
+def load_data_from_file(filename) -> list[dict]:
+    """
+    Считывает csv файл в список словарей
+    """
     result = []
     with open(filename, "r", encoding="UTF-8") as f:
         reader = DictReader(f)
@@ -16,12 +19,37 @@ SERVER_NAME = "http://localhost:8000/"
 
 
 def test_status():
+    """
+    Тестирует статус сервиса
+    """
+    print("\nTest before load data")
+    r = httpx.delete(SERVER_NAME + "remove_all")
+    print(f"HTTP Code = {r.status_code}, answer {r.text}")
+    assert r.status_code == 200
+
+    r = httpx.get(SERVER_NAME)
+    print(f"HTTP Code = {r.status_code}, answer {r.text}")
+    assert r.status_code == 200
+
+
+def test_sync_data():
+    """
+    Тестирует загрузку данных с S3
+    """
+    print("\nTest sync data")
+    r = httpx.get(SERVER_NAME + "sync_data")
+    print(f"HTTP Code = {r.status_code}, answer {r.text}")
+    assert r.status_code == 200
+
     r = httpx.get(SERVER_NAME)
     print(f"HTTP Code = {r.status_code}, answer {r.text}")
     assert r.status_code == 200
 
 
 def test_send_from_file():
+    """
+    Тестирует загрузку данных из файла
+    """
     r = httpx.get(SERVER_NAME + "get_data")
     assert r.status_code == 200
 
@@ -38,7 +66,20 @@ def test_send_from_file():
     assert r.status_code == 200
 
 
+def test_status_after():
+    """
+    Тестирует статус сервиса
+    """
+    print("\nTest after load data")
+    r = httpx.get(SERVER_NAME)
+    print(f"HTTP Code = {r.status_code}, answer {r.text}")
+    assert r.status_code == 200
+
+
 def test_fit_1():
+    """
+    Тестирует обучение первой модели
+    """
     print("\nTest fit 01")
     r = httpx.post(
         SERVER_NAME + "fit",
@@ -58,6 +99,9 @@ def test_fit_1():
 
 
 def test_fit_2():
+    """
+    Тестирует обучение второй модели
+    """
     print("\nTest fit 02")
     r = httpx.post(
         SERVER_NAME + "fit",
@@ -80,6 +124,9 @@ def test_fit_2():
 
 
 def test_get_models():
+    """
+    Тестирует получение информации о моделях
+    """
     print("\nTest get_models")
     r = httpx.get(SERVER_NAME + "get_models")
     print(f"HTTP Code = {r.status_code}, answer {r.text}")
@@ -87,17 +134,48 @@ def test_get_models():
 
 
 def test_predict():
+    """
+    Тестирует прогноз двух моделей
+    """
     print("\nTest predict")
-    r = httpx.get(SERVER_NAME + "predict/Model_01")
+    r = httpx.post(SERVER_NAME + "predict", content="""{"model_id": "Model_01"}""")
     print(f"HTTP Code = {r.status_code}, answer {r.text}")
     assert r.status_code == 200
 
-    r = httpx.get(SERVER_NAME + "predict/Model_02")
+    r = httpx.post(SERVER_NAME + "predict", content="""{"model_id": "Model_02"}""")
     print(f"HTTP Code = {r.status_code}, answer {r.text}")
     assert r.status_code == 200
 
 
-def test_status_arter():
+def test_predict_with_release():
+    """
+    Тестирует прогноз двух моделей с заданным релизом
+    """
+    print("\nTest predict with release")
+    r = httpx.post(SERVER_NAME + "predict", content="""{"model_id": "Model_01", "release": "Ставка не будет повышена"}""")
+    print(f"HTTP Code = {r.status_code}, answer {r.text}")
+    assert r.status_code == 200
+
+    r = httpx.post(SERVER_NAME + "predict", content="""{"model_id": "Model_02", "release": "Ставка не будет повышена"}""")
+    print(f"HTTP Code = {r.status_code}, answer {r.text}")
+    assert r.status_code == 200
+
+
+def test_status_after():
+    """
+    Тестирует статус сервиса с обученными моделями
+    """
     r = httpx.get(SERVER_NAME)
     print(f"HTTP Code = {r.status_code}, answer {r.text}")
     assert r.status_code == 200
+
+
+def test_calc_metrics():
+    """
+    Тестирует получение данных обучения
+    """
+    print("\nTest calc metrics")
+    r = httpx.get(SERVER_NAME + "calc_metrics/Model_01/30", timeout=1000.0)
+    print(f"HTTP Code = {r.status_code}, answer {r.text}")
+    assert r.status_code == 200
+

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List, Dict, Optional, Union
-from pydantic import BaseModel, Field, field_validator
 from enum import Enum
+from pydantic import BaseModel, Field, field_validator
 
 
 class StatusResponse(BaseModel):
@@ -32,6 +32,7 @@ class Datum(BaseModel):
         mode="before",
     )
     def blank_string(cls, value):
+        "Превращает пустую строку в None"
         if value == "":
             return None
         return value
@@ -57,9 +58,20 @@ class ModelType(str, Enum):
     svc = "SVC"
 
 
+class PredictRequest(BaseModel):
+    model_id: str
+    release: Optional[str] = None
+
+
 class PredictResponse(BaseModel):
     predict: int = Field(..., title="Prediction")
     predict_proba: List[float] = Field(..., title="Probability estimates")
+
+
+class CalcResponse(BaseModel):
+    y_preds: List[int] = Field(..., title="Prediction values")
+    y_pred_probas: List[List[float]] = Field(..., title="Probability estimates")
+    y_trues: List[int] = Field(..., title="Prediction values")
 
 
 class ValidationError(BaseModel):

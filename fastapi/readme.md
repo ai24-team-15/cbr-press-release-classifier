@@ -19,7 +19,7 @@ pytest -s tests/test.py
 ```
 python -m pycodestyle --max-line-length 120 *.py tests/*.py
 python -m flake8 --max-line-length=120 *.py tests/*.py
-pylint --max-line-length=120 --disable="C0103,C0114,C0115" *.py tests/*.py #Тут надо попотеть, чтобы все проходило =)
+pylint --max-line-length=120 --disable="C0103,C0114,C0115" *.py tests/*.py
 
 python -m black --line-length 120 *.py tests/*.py
 ```

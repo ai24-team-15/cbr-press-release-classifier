@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     data_path: str = os.getenv("DATA_PATH", default="data")
     logs_path: str = os.getenv("LOGS_PATH", default="logs")
     random_state: int = os.getenv("RANDOM_STATE", default="42")
+    threads_count: int = os.getenv("THREADS_COUNT", default="5")
 
 
 settings = Settings()
