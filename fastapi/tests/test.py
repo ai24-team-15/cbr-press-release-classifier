@@ -67,7 +67,7 @@ def test_send_from_file():
     assert r.status_code == 200
 
 
-def test_status_after():
+def test_status_after_add():
     """
     Тестирует статус сервиса
     """
@@ -85,7 +85,7 @@ def test_fit_1():
     r = httpx.post(
         SERVER_NAME + "fit",
         content="""{
-                   "model_id": "Model_01",
+                   "model_id": "Model_SVC",
                    "description": "SVC model with best hyperparameters",
                    "hyperparameters": {
                         "C": 5,
@@ -107,7 +107,7 @@ def test_fit_2():
     r = httpx.post(
         SERVER_NAME + "fit",
         content="""{
-                   "model_id": "Model_02",
+                   "model_id": "Model_LR",
                    "description":
                         "LogisticRegression model with best hyperparameters",
                    "hyperparameters": {
@@ -139,11 +139,11 @@ def test_predict():
     Тестирует прогноз двух моделей
     """
     print("\nTest predict")
-    r = httpx.post(SERVER_NAME + "predict", content="""{"model_id": "Model_01"}""")
+    r = httpx.post(SERVER_NAME + "predict", content="""{"model_id": "Model_SVC"}""")
     print(f"HTTP Code = {r.status_code}, answer {r.text}")
     assert r.status_code == 200
 
-    r = httpx.post(SERVER_NAME + "predict", content="""{"model_id": "Model_02"}""")
+    r = httpx.post(SERVER_NAME + "predict", content="""{"model_id": "Model_LR"}""")
     print(f"HTTP Code = {r.status_code}, answer {r.text}")
     assert r.status_code == 200
 
@@ -153,11 +153,15 @@ def test_predict_with_release():
     Тестирует прогноз двух моделей с заданным релизом
     """
     print("\nTest predict with release")
-    r = httpx.post(SERVER_NAME + "predict", content="""{"model_id": "Model_01", "release": "Ставка не будет повышена"}""")
+    r = httpx.post(
+        SERVER_NAME + "predict", content="""{"model_id": "Model_SVC", "release": "Ставка не будет повышена"}"""
+    )
     print(f"HTTP Code = {r.status_code}, answer {r.text}")
     assert r.status_code == 200
 
-    r = httpx.post(SERVER_NAME + "predict", content="""{"model_id": "Model_02", "release": "Ставка не будет повышена"}""")
+    r = httpx.post(
+        SERVER_NAME + "predict", content="""{"model_id": "Model_LR", "release": "Ставка не будет повышена"}"""
+    )
     print(f"HTTP Code = {r.status_code}, answer {r.text}")
     assert r.status_code == 200
 
@@ -176,7 +180,6 @@ def test_calc_metrics():
     Тестирует получение данных обучения
     """
     print("\nTest calc metrics")
-    r = httpx.get(SERVER_NAME + "calc_metrics/Model_01/30", timeout=1000.0)
+    r = httpx.get(SERVER_NAME + "calc_metrics/Model_SVC/30", timeout=1000.0)
     print(f"HTTP Code = {r.status_code}, answer {r.text}")
     assert r.status_code == 200
-

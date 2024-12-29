@@ -4,8 +4,6 @@ import logging
 import json
 import re
 import pickle
-import numpy as np
-from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score, roc_auc_score, confusion_matrix, classification_report
 import pandas as pd
 from nltk.corpus import stopwords
 from pydantic import ValidationError
@@ -14,12 +12,12 @@ from models import Datum
 from settings import settings
 
 
-def load_data_from_file(filename = f"{settings.data_path}/data.csv") -> list[dict]:
+def load_data_from_file(filename=f"{settings.data_path}/data.csv") -> list[dict]:
     """
     Загрузка данных из файла
     """
     result = []
-    
+
     if os.path.isfile(filename):
         with open(filename, "r", encoding="UTF-8") as f:
             reader = DictReader(f)
@@ -96,6 +94,11 @@ def preprocessor(text):
     """
     mystem = Mystem()
     stop_words = set(stopwords.words("russian"))
+    filename = f"{settings.data_path}/stopwords.txt"
+    if os.path.isfile(filename):
+        with open(filename, "r", encoding="UTF-8") as f:
+            words = f.read().splitlines()
+            stop_words |= set(words)
     text = text.lower()
     regex = re.compile("[^а-я А-ЯЁё]")
     text = regex.sub(" ", text)
@@ -128,11 +131,11 @@ def train_model(model, X, y):
 
 def calc_metrics_utils(model, X, y, window):
     """
-    Функция для тестирования наших моделей. 
-    Зададим начальный порог и будем обучать, 
-    модель на наблюдениях до порога, 
-    а тестировать на одном наблюдении после. 
-    Двигая порог протестируем нашу модель. 
+    Функция для тестирования наших моделей.
+    Зададим начальный порог и будем обучать,
+    модель на наблюдениях до порога,
+    а тестировать на одном наблюдении после.
+    Двигая порог протестируем нашу модель.
     И потом сравним с истинными ответами.
     """
     y_preds = []

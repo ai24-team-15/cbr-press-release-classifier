@@ -26,9 +26,11 @@ import urllib.request
 
 executor = ProcessPoolExecutor(settings.threads_count)
 
+
 async def run_in_process(fn, *args):
+    "Запускает переданную функцию в фоновом режиме"
     loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(executor, fn, *args) 
+    return await loop.run_in_executor(executor, fn, *args)
 
 
 router = APIRouter()
@@ -92,13 +94,13 @@ async def calc_metrics(model_id: str, window: int, request: Request) -> Union[St
         logging.info(answer)
         return StatusResponse(status=answer)
     clf = None
-    if request.app.ml_models[model_id]['type'] == "LogisticRegression":
-        clf = LogisticRegression(**request.app.ml_models[model_id]['hyperparameters'])
-    elif request.app.ml_models[model_id]['type'] == "SVC":
-        clf = SVC(**request.app.ml_models[model_id]['hyperparameters'])
+    if request.app.ml_models[model_id]["type"] == "LogisticRegression":
+        clf = LogisticRegression(**request.app.ml_models[model_id]["hyperparameters"])
+    elif request.app.ml_models[model_id]["type"] == "SVC":
+        clf = SVC(**request.app.ml_models[model_id]["hyperparameters"])
     X, y, _ = prepare_data(request.app.data)
     vec = TfidfVectorizer(preprocessor=preprocessor)
-    X_tfidf = vec.fit_transform(X['release'])
+    X_tfidf = vec.fit_transform(X["release"])
     res = await run_in_process(calc_metrics_utils, clf, X_tfidf, y, window)
     return CalcResponse(y_preds=res[0], y_pred_probas=res[1], y_trues=res[2])
 
@@ -203,11 +205,11 @@ async def sync_data(request: Request) -> StatusResponse:
     try:
         urllib.request.urlretrieve(
             "https://storage.yandexcloud.net/cbr-press-release-classifier/cbr-press-releases.csv",
-            f"{settings.data_path}/data_s3.csv"
+            f"{settings.data_path}/data_s3.csv",
         )
         request.app.data = load_data_from_file(filename=f"{settings.data_path}/data_s3.csv")
-        answer = f"Данные с S3 успешно загружены ({len(request.app.data)})"        
-    except Exception as e:
+        answer = f"Данные с S3 успешно загружены ({len(request.app.data)})"
+    except urllib.HTTPError as e:
         answer = f"Ошибка загрузки данных с S3 ({e})"
     logging.info(answer)
     return StatusResponse(status=answer)
