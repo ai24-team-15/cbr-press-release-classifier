@@ -88,17 +88,20 @@ def save_models_to_file(models: dict):
         json.dump(models, f)
 
 
+stop_words = set(stopwords.words("russian"))
+stopwords_filename = f"{settings.data_path}/stopwords.txt"
+if os.path.isfile(stopwords_filename):
+    with open(stopwords_filename, "r", encoding="UTF-8") as fsw:
+        words = fsw.read().splitlines()
+        stop_words |= set(words)
+        print(len(stop_words))
+
+
 def preprocessor(text):
     """
     Препроцессор для векторизации
     """
     mystem = Mystem()
-    stop_words = set(stopwords.words("russian"))
-    filename = f"{settings.data_path}/stopwords.txt"
-    if os.path.isfile(filename):
-        with open(filename, "r", encoding="UTF-8") as f:
-            words = f.read().splitlines()
-            stop_words |= set(words)
     text = text.lower()
     regex = re.compile("[^а-я А-ЯЁё]")
     text = regex.sub(" ", text)
@@ -125,6 +128,7 @@ def prepare_data(data_dict):
 
 
 def train_model(model, X, y):
+    "Обучение модели"
     model.fit(X, y)
     return model
 

@@ -154,13 +154,17 @@ def test_predict_with_release():
     """
     print("\nTest predict with release")
     r = httpx.post(
-        SERVER_NAME + "predict", content="""{"model_id": "Model_SVC", "release": "Ставка не будет повышена"}"""
+        SERVER_NAME + "predict",
+        content="""{"model_id": "Model_SVC", "release": "Ставка будет повышена"}""",
+        timeout=1000.0
     )
     print(f"HTTP Code = {r.status_code}, answer {r.text}")
     assert r.status_code == 200
 
     r = httpx.post(
-        SERVER_NAME + "predict", content="""{"model_id": "Model_LR", "release": "Ставка не будет повышена"}"""
+        SERVER_NAME + "predict",
+        content="""{"model_id": "Model_LR", "release": "Ставка будет повышена"}""",
+        timeout=1000.0
     )
     print(f"HTTP Code = {r.status_code}, answer {r.text}")
     assert r.status_code == 200

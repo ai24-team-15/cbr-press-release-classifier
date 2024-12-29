@@ -1,12 +1,13 @@
 import logging
 import asyncio
 from typing import Optional, Union
+from concurrent.futures.process import ProcessPoolExecutor
+import urllib.request
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from concurrent.futures.process import ProcessPoolExecutor
 from pydantic import TypeAdapter
 from fastapi import APIRouter, Response, Request, status
 from models import (
@@ -21,7 +22,6 @@ from models import (
 )
 from utils import preprocessor, prepare_data, train_model, calc_metrics_utils, load_data_from_file
 from settings import settings
-import urllib.request
 
 
 executor = ProcessPoolExecutor(settings.threads_count)
@@ -209,7 +209,7 @@ async def sync_data(request: Request) -> StatusResponse:
         )
         request.app.data = load_data_from_file(filename=f"{settings.data_path}/data_s3.csv")
         answer = f"Данные с S3 успешно загружены ({len(request.app.data)})"
-    except urllib.HTTPError as e:
+    except urllib.error.HTTPError as e:
         answer = f"Ошибка загрузки данных с S3 ({e})"
     logging.info(answer)
     return StatusResponse(status=answer)

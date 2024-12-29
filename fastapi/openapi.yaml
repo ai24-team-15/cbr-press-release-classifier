@@ -31,13 +31,39 @@ paths:
           description: Successful Response
           content:
             application/json:
-              schema: {}
-        '201':
-          description: Created
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+        '422':
+          description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StatusResponse'
+                $ref: '#/components/schemas/HTTPValidationError'
+  /calc_metrics/{model_id}/{window}:
+    get:
+      summary: Calc Metrics
+      description: Обучает на части данных и запоминает метрики
+      operationId: calc_metrics_calc_metrics__model_id___window__get
+      parameters:
+      - name: model_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Model Id
+      - name: window
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Window
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalcResponse'
         '422':
           description: Validation Error
           content:
@@ -97,30 +123,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-  /predict/{model_id}:
-    get:
+  /predict:
+    post:
       summary: Predict
       description: Делает прогноз с помощью указанной модели
-      operationId: predict_predict__model_id__get
-      parameters:
-      - name: model_id
-        in: path
+      operationId: predict_predict_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PredictRequest'
         required: true
-        schema:
-          type: string
-          title: Model Id
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
-              schema: {}
-        '201':
-          content:
-            application/json:
               schema:
                 $ref: '#/components/schemas/PredictResponse'
-          description: Created
         '422':
           description: Validation Error
           content:
@@ -139,8 +159,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatusResponse'
+  /remove_all:
+    delete:
+      summary: Remove All
+      description: Удаляет из сервиса модели и данные
+      operationId: remove_all_remove_all_delete
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
 components:
   schemas:
+    CalcResponse:
+      properties:
+        y_preds:
+          items:
+            type: integer
+          type: array
+          title: Prediction values
+        y_pred_probas:
+          items:
+            items:
+              type: number
+            type: array
+          type: array
+          title: Probability estimates
+        y_trues:
+          items:
+            type: integer
+          type: array
+          title: Prediction values
+      type: object
+      required:
+      - y_preds
+      - y_pred_probas
+      - y_trues
+      title: CalcResponse
     DataModel:
       properties:
         data:
@@ -258,6 +315,20 @@ components:
       required:
       - models
       title: ModelsResponse
+    PredictRequest:
+      properties:
+        model_id:
+          type: string
+          title: Model Id
+        release:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Release
+      type: object
+      required:
+      - model_id
+      title: PredictRequest
     PredictResponse:
       properties:
         predict:
