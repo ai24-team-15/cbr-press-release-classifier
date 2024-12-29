@@ -17,7 +17,7 @@ def configure_logging(level: Optional[int] = logging.INFO) -> None:
     :param level: Уровень логирования (по умолчанию logging.INFO).
     """
     logging.basicConfig(
-        filename="logs/app.log",  # Файл для сохранения логов
+        filename="logs/cbr_ui.log",  # Файл для сохранения логов
         encoding="utf-8",         # Кодировка файла логов
         format="%(asctime)s %(levelname)-8s %(message)s",  # Формат сообщения
         datefmt="%Y-%m-%d %H:%M:%S",                      # Формат даты и времени
