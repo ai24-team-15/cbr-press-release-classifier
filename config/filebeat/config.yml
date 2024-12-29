@@ -7,7 +7,7 @@ filebeat.inputs:
     id: cbr_service
     enabled: true
     paths:
-      - /cbr_logs/cbr_service*.log
+      - /cbr_logs/cbr_service*.log*
     parsers:
       - multiline:
           type: pattern
@@ -22,7 +22,7 @@ filebeat.inputs:
     id: cbr_ui
     enabled: true
     paths:
-      - /cbr_logs/cbr_ui*.log
+      - /cbr_logs/cbr_ui*.log*
     parsers:
       - multiline:
           type: pattern
