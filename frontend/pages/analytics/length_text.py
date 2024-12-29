@@ -1,15 +1,10 @@
-import logging
 import streamlit as st
 import pandas as pd
 
 from tools.utils import COLORS, CATEGORIAL_NAMES
 from tools.plots import plot_len_text, plot_boxplot
-from tools.config import configure_logging
+from tools.config import log as logger
 
-
-# Настройка логирования
-configure_logging()
-logger = logging.getLogger(__name__)
 
 # Отображение подзаголовка в приложении
 st.subheader("Распределение длин текстов релизов")

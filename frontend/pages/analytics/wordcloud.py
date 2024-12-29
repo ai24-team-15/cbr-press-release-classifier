@@ -1,15 +1,11 @@
-import streamlit as st
-import logging
 import pickle
 import pandas as pd
+import streamlit as st
 
 from tools.utils import get_data_for_wordclouds
 from tools.plots import plot_wordcloud_all, plot_wordcloud_per_class
-from tools.config import configure_logging
+from tools.config import log as logger
 
-# Конфигурация логирования
-configure_logging()
-logger = logging.getLogger(__name__)
 
 # Загрузка данных в session_state или чтение из файла
 if 'data' not in st.session_state:

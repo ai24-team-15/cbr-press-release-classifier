@@ -1,14 +1,9 @@
-import logging
 import asyncio
 import pandas as pd
 import streamlit as st
-from tools.config import configure_logging
+from tools.config import log as logger
 from tools.api import client
 
-
-# Конфигурация логирования
-configure_logging()
-logger = logging.getLogger(__name__)
 
 # Установка заголовка приложения
 st.title("Классификатор пресс-релизов ЦБ с предсказанием будущей ключевой ставки")
@@ -45,7 +40,7 @@ if upload_file := st.file_uploader("Выберите файл с данными"
     st.session_state['other_data'] = True
 
     logger.info(
-        "Файл: %s загружен.",
+        "пользовательски файл: %s загружен.",
         upload_file.name
     )
 
@@ -67,9 +62,15 @@ if upload_file := st.file_uploader("Выберите файл с данными"
         st.session_state['data'] = data
 
 # Отправка данных на сервер для обработки
-res = asyncio.run(
-    client.load_data('/load_data', st.session_state['data'])
-)
+try:
+    res = asyncio.run(
+        client.load_data('/load_data', st.session_state['data'])
+    )
+except Exception as e:
+    logger.error("Ошибка при загрузке данных на сервер: %s", e)
+    raise e
+
+logger.info("Данные загружены на сервер.")
 
 # Раздел для отображения загруженных данных
 st.subheader("Используемые данные")

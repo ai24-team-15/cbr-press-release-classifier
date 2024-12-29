@@ -1,15 +1,11 @@
-import logging
 import pickle
 import streamlit as st
 import pandas as pd
 
 from tools.utils import get_vectors, COLORS, preprocessing_release
 from tools.plots import plot_linspace
-from tools.config import configure_logging
+from tools.config import log as logger
 
-# Конфигурация логирования
-configure_logging()
-logger = logging.getLogger(__name__)
 
 # Заголовок в интерфейсе Streamlit
 st.subheader('Представление пресс-релизов в двумерном пространстве')

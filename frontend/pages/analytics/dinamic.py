@@ -1,14 +1,13 @@
-import logging
 import streamlit as st
 import pandas as pd
 
 from tools.plots import plot_dinamic
-from tools.config import configure_logging
+from tools.config import log as logger
 
 
 # Настройка логирования
-configure_logging()
-logger = logging.getLogger(__name__)
+# configure_logging()
+# logger = logging.getLogger(__name__)
 
 # Проверка наличия данных в session_state или их загрузка из файла
 if "data" in st.session_state:

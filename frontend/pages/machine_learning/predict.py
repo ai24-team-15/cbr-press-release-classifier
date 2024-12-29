@@ -2,6 +2,8 @@ import asyncio
 import streamlit as st
 import pandas as pd
 from tools.api import client
+from tools.config import log as logger
+
 
 # Заголовок страницы
 st.header('Прогнозирование решения ЦБ')
@@ -63,8 +65,14 @@ if release:
 
 # Кнопка для получения предсказания модели
 if st.button('Получить предсказание'):
-    # Асинхронный запрос на предсказание с выбранной моделью
-    prediction = asyncio.run(client.predict('/predict', model_id=model_id))
+    try:
+        # Асинхронный запрос на предсказание с выбранной моделью
+        prediction = asyncio.run(client.predict('/predict', model_id=model_id))
+    except Exception as e:
+        logger.error("Ошибка при получении предсказания моделью %s: %s", model_id, e)
+        raise e
+
+    logger.info("Предсказание модели %s успешно получено.", model_id)
 
     # Отображение предсказания модели
     st.subheader('Предсказание модели')

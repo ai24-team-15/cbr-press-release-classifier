@@ -1,14 +1,9 @@
-import logging
 import streamlit as st
 import pandas as pd
 from tools.plots import plot_pie
 from tools.utils import COLORS, CATEGORIAL_NAMES
-from tools.config import configure_logging
+from tools.config import log as logger
 
-
-# Настройка логирования и инициализация логгера
-configure_logging()
-logger = logging.getLogger(__name__)
 
 # Отображение подзаголовка в приложении Streamlit
 st.subheader("Распределение решений по ключевой ставке")

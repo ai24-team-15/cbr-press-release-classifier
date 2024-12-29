@@ -1,6 +1,8 @@
 import asyncio
 import streamlit as st
 from tools.api import client
+from tools.config import log as logger
+
 
 # Заголовок страницы
 st.header("Обучение модели")
@@ -8,10 +10,9 @@ st.header("Обучение модели")
 # Инициализация пустого словаря для передачи данных в запрос
 payload = {}
 
-# Выбор типа модели с помощью радио-кнопок
+# Выбор типа модели
 payload["type"] = st.radio("Выберите модель", ["LogisticRegression", "SVC"])
 
-# Подзаголовок для выбора гиперпараметров модели
 st.subheader("Выберите гиперпараметры модели")
 
 # Словарь для хранения значений гиперпараметров
@@ -29,7 +30,7 @@ if payload["type"] == "LogisticRegression":
     # Выбор типа регуляризации (penalty)
     params["penalty"] = st.radio("penalty", ["l2", None, "l1", "elasticnet"])
 
-    # Условия для выбора solver в зависимости от выбранной penalty
+    # Условия для выбора solver в зависимости от выбранной регуляризации
     if params["penalty"] == "l2":
         params["solver"] = st.radio(
             "solver",
@@ -113,9 +114,16 @@ if st.button("Обучить модель"):
     if not payload["model_id"]:
         st.error("Введите id модели")  # Если ID не введен, выводится ошибка
     else:
-        # Вызов асинхронного метода fit API с передачей данных
-        response = asyncio.run(
-            client.fit('/fit', payload)
-        )
+        try:
+            # Вызов асинхронного метода fit API с передачей данных
+            response = asyncio.run(
+                client.fit('/fit', payload)
+            )
+        except Exception as e:
+            logger.error("Ошибка при обучении модели: %s", e)
+            raise e
+
+        logger.info("Модель %s успешно обучена.", payload["model_id"])
+
         # Вывод статуса ответа от API
         st.warning(response["status"])
