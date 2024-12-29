@@ -1,7 +1,13 @@
 import logging
 import os
 from typing import Optional
+from dotenv import load_dotenv
 
+# Загружаем переменные окружения из файла .env
+load_dotenv()
+
+# определяем глобальную переменную API_URL
+API_URL = os.getenv("API_URL")
 
 # Настройка логгера с указанным уровнем логирования
 def configure_logging(level: Optional[int] = logging.INFO) -> None:
@@ -21,3 +27,5 @@ def configure_logging(level: Optional[int] = logging.INFO) -> None:
 
 # Создаем директорию для логов, если она отсутствует
 os.makedirs("logs", exist_ok=True)
+
+

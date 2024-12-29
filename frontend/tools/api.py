@@ -2,6 +2,7 @@ import json
 from typing import Any, Dict, List
 
 import aiohttp
+from tools.config import API_URL
 
 
 class ApiClient:
@@ -74,4 +75,4 @@ class ApiClient:
 
 
 # Создание экземпляра клиента с базовым URL
-client = ApiClient('http://0.0.0.0:8000')
+client = ApiClient(API_URL)
