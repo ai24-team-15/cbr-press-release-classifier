@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  api:
+    image: cr.yandex/${REGISTRY_ID}/cbr-api:latest
+    container_name: cbr-api
+    command: python3 cbr-api/main.py
+    restart: unless-stopped
+    environment:
+      - LOGS_PATH=/app/logs
+      - MODELS_PATH=/app/models
+      - DATA_PATH=/app/data
+      - MYSTEM3_PATH=/app/data/mystem
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+      - models_data:/app/models
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://api:8000"]
+    networks:
+      - cbr-network
+
+  ui:
+    image: cr.yandex/${REGISTRY_ID}/cbr-ui:latest
+    container_name: cbr-ui
+    command: >
+      streamlit run cbr-ui/main.py
+      --server.port=8000
+      --logger.level=debug
+      --server.fileWatcherType=none
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://ui:8000/_stcore/health"]
+    depends_on:
+      - api
+    ports:
+      - "8000:8000"
+    environment:
+      - API_URL=http://api:8000
+      - MYSTEM3_PATH=/app/data/mystem
+    networks:
+      - cbr-network
+
+networks:
+  cbr-network:
+    driver: bridge
+
+volumes:
+  models_data:
