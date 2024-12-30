@@ -5,6 +5,7 @@ import json
 import re
 import pickle
 import pandas as pd
+import nltk
 from nltk.corpus import stopwords
 from pydantic import ValidationError
 from pymystem3 import Mystem
@@ -88,13 +89,13 @@ def save_models_to_file(models: dict):
         json.dump(models, f)
 
 
+nltk.download('stopwords')
 stop_words = set(stopwords.words("russian"))
 stopwords_filename = f"{settings.data_path}/stopwords.txt"
 if os.path.isfile(stopwords_filename):
     with open(stopwords_filename, "r", encoding="UTF-8") as fsw:
         words = fsw.read().splitlines()
         stop_words |= set(words)
-        print(len(stop_words))
 
 
 def preprocessor(text):
