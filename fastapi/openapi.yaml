@@ -1,0 +1,376 @@
+openapi: 3.1.0
+info:
+  title: cbr_press_release_classifier
+  version: 1.0.0
+paths:
+  /:
+    get:
+      summary: Root
+      description: Информация о статусе сервиса.
+      operationId: root__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+  /fit:
+    post:
+      summary: Fit
+      description: Обучает выбранную модель
+      operationId: fit_fit_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Model'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /calc_metrics/{model_id}/{window}:
+    get:
+      summary: Calc Metrics
+      description: Обучает на части данных и запоминает метрики
+      operationId: calc_metrics_calc_metrics__model_id___window__get
+      parameters:
+      - name: model_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Model Id
+      - name: window
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Window
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalcResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /get_data:
+    get:
+      summary: Get Data
+      description: Возвращает данные
+      operationId: get_data_get_data_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataModel'
+  /get_models:
+    get:
+      summary: Get Status
+      description: Возвращает список реализованных моделей
+      operationId: get_status_get_models_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelsResponse'
+  /load_data:
+    post:
+      summary: Load Data
+      description: Загрузка дополнительных данных
+      operationId: load_data_load_data_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataModel'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /predict:
+    post:
+      summary: Predict
+      description: Делает прогноз с помощью указанной модели
+      operationId: predict_predict_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PredictRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /sync_data:
+    get:
+      summary: Sync Data
+      description: Запускает получение данных
+      operationId: sync_data_sync_data_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+  /remove_all:
+    delete:
+      summary: Remove All
+      description: Удаляет из сервиса модели и данные
+      operationId: remove_all_remove_all_delete
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+components:
+  schemas:
+    CalcResponse:
+      properties:
+        y_preds:
+          items:
+            type: integer
+          type: array
+          title: Prediction values
+        y_pred_probas:
+          items:
+            items:
+              type: number
+            type: array
+          type: array
+          title: Probability estimates
+        y_trues:
+          items:
+            type: integer
+          type: array
+          title: Prediction values
+      type: object
+      required:
+      - y_preds
+      - y_pred_probas
+      - y_trues
+      title: CalcResponse
+    DataModel:
+      properties:
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Datum'
+            type: array
+          - type: 'null'
+          title: Data
+      type: object
+      title: DataModel
+    Datum:
+      properties:
+        date:
+          type: string
+          title: Date
+        link:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Link
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        release:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Release
+        inflation:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Inflation
+        rate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Rate
+        usd:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Usd
+        usd_cur_change_relative:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Usd Cur Change Relative
+        target_categorial:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Target Categorial
+        target_absolute:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Target Absolute
+        target_relative:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Target Relative
+      type: object
+      required:
+      - date
+      title: Datum
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Model:
+      properties:
+        model_id:
+          type: string
+          title: Model Id
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        hyperparameters:
+          type: object
+          title: Hyperparameters
+        type:
+          $ref: '#/components/schemas/ModelType'
+      type: object
+      required:
+      - model_id
+      - hyperparameters
+      - type
+      title: Model
+    ModelType:
+      type: string
+      enum:
+      - LogisticRegression
+      - SVC
+      title: ModelType
+    ModelsResponse:
+      properties:
+        models:
+          items:
+            $ref: '#/components/schemas/Model'
+          type: array
+          title: Models
+      type: object
+      required:
+      - models
+      title: ModelsResponse
+    PredictRequest:
+      properties:
+        model_id:
+          type: string
+          title: Model Id
+        release:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Release
+      type: object
+      required:
+      - model_id
+      title: PredictRequest
+    PredictResponse:
+      properties:
+        predict:
+          type: integer
+          title: Prediction
+        predict_proba:
+          items:
+            type: number
+          type: array
+          title: Probability estimates
+      type: object
+      required:
+      - predict
+      - predict_proba
+      title: PredictResponse
+    StatusResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - status
+      title: StatusResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
