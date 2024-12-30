@@ -1,22 +1,36 @@
 import logging
-from settings import settings
-from fastapi import APIRouter, Response, Request, status
-from pydantic import TypeAdapter
-from models import (
-    Model,
-    DataModel,
-    HTTPValidationError,
-    ModelsResponse,
-    PredictResponse,
-    StatusResponse,
-)
+import asyncio
 from typing import Optional, Union
+from concurrent.futures.process import ProcessPoolExecutor
+import urllib.request
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from utils import preprocessor, prepare_data
+from pydantic import TypeAdapter
+from fastapi import APIRouter, Response, Request, status
+from models import (
+    Model,
+    DataModel,
+    HTTPValidationError,
+    ModelsResponse,
+    PredictRequest,
+    PredictResponse,
+    CalcResponse,
+    StatusResponse,
+)
+from utils import preprocessor, prepare_data, train_model, calc_metrics_utils, load_data_from_file
+from settings import settings
+
+
+executor = ProcessPoolExecutor(settings.threads_count)
+
+
+async def run_in_process(fn, *args):
+    "Запускает переданную функцию в фоновом режиме"
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(executor, fn, *args)
 
 
 router = APIRouter()
@@ -32,7 +46,7 @@ async def root(request: Request) -> StatusResponse:
     )
 
 
-@router.post("/fit", response_model=None, responses={"201": {"model": StatusResponse}})
+@router.post("/fit", response_model=None, responses={"200": {"model": StatusResponse}})
 async def fit(body: Model, request: Request) -> Optional[StatusResponse]:
     """
     Обучает выбранную модель
@@ -53,7 +67,8 @@ async def fit(body: Model, request: Request) -> Optional[StatusResponse]:
     transform = ColumnTransformer([("tf-idf", TfidfVectorizer(preprocessor=preprocessor), "release")])
     pipeline = Pipeline([("transform", transform), ("classifier", clf)])
     X, y, _ = prepare_data(request.app.data)
-    pipeline.fit(X, y)
+    pipeline = await run_in_process(train_model, pipeline, X, y)
+    # pipeline.fit(X, y)
     request.app.ml_models[body.model_id] = {
         "description": body.description,
         "hyperparameters": body.hyperparameters,
@@ -63,6 +78,31 @@ async def fit(body: Model, request: Request) -> Optional[StatusResponse]:
     answer = f"Модель '{body.model_id}' обучена"
     logging.info(answer)
     return StatusResponse(status=answer)
+
+
+@router.get("/calc_metrics/{model_id}/{window}", response_model=None, responses={"200": {"model": CalcResponse}})
+async def calc_metrics(model_id: str, window: int, request: Request) -> Union[StatusResponse, CalcResponse]:
+    """
+    Обучает на части данных и запоминает метрики
+    """
+    if model_id not in request.app.ml_models:
+        answer = f"Модель '{model_id}' не добавлена"
+        logging.info(answer)
+        return StatusResponse(status=answer)
+    if (len(request.app.data)) == 0 or (window >= len(request.app.data)):
+        answer = "Нет данных для обучения"
+        logging.info(answer)
+        return StatusResponse(status=answer)
+    clf = None
+    if request.app.ml_models[model_id]["type"] == "LogisticRegression":
+        clf = LogisticRegression(**request.app.ml_models[model_id]["hyperparameters"])
+    elif request.app.ml_models[model_id]["type"] == "SVC":
+        clf = SVC(**request.app.ml_models[model_id]["hyperparameters"])
+    X, y, _ = prepare_data(request.app.data)
+    vec = TfidfVectorizer(preprocessor=preprocessor)
+    X_tfidf = vec.fit_transform(X["release"])
+    res = await run_in_process(calc_metrics_utils, clf, X_tfidf, y, window)
+    return CalcResponse(y_preds=res[0], y_pred_probas=res[1], y_trues=res[2])
 
 
 @router.get("/get_data", response_model=DataModel)
@@ -140,28 +180,46 @@ async def load_data(
     return StatusResponse(status="Данные успешно загружены")
 
 
-@router.get(
-    "/predict/{model_id}",
-    response_model=None,
-    responses={"201": {"model": PredictResponse}},
-)
-async def predict(model_id: str, request: Request) -> Union[PredictResponse, StatusResponse]:
+@router.post("/predict", response_model=None, responses={"200": {"model": PredictResponse}})
+async def predict(body: PredictRequest, request: Request) -> Union[PredictResponse, StatusResponse]:
     """
     Делает прогноз с помощью указанной модели
     """
-    if model_id not in request.app.ml_models:
-        answer = f"Модель '{model_id}' не загружена"
+    if body.model_id not in request.app.ml_models:
+        answer = f"Модель '{body.model_id}' не загружена"
         logging.info(answer)
         return StatusResponse(status=answer)
     _, _, last_release = prepare_data(request.app.data)
-    predict = request.app.ml_models[model_id]["pipeline"].predict(last_release)[0]
-    predict_proba = request.app.ml_models[model_id]["pipeline"].predict_proba(last_release)[0]
-    return PredictResponse(predict=predict, predict_proba=predict_proba)
+    if body.release is not None:
+        last_release.release = body.release
+    pred = request.app.ml_models[body.model_id]["pipeline"].predict(last_release)[0]
+    pred_proba = request.app.ml_models[body.model_id]["pipeline"].predict_proba(last_release)[0]
+    return PredictResponse(predict=pred, predict_proba=pred_proba)
 
 
 @router.get("/sync_data", response_model=StatusResponse)
-async def sync_data() -> StatusResponse:
+async def sync_data(request: Request) -> StatusResponse:
     """
     Запускает получение данных
     """
-    pass
+    try:
+        urllib.request.urlretrieve(
+            "https://storage.yandexcloud.net/cbr-press-release-classifier/cbr-press-releases.csv",
+            f"{settings.data_path}/data_s3.csv",
+        )
+        request.app.data = load_data_from_file(filename=f"{settings.data_path}/data_s3.csv")
+        answer = f"Данные с S3 успешно загружены ({len(request.app.data)})"
+    except urllib.error.HTTPError as e:
+        answer = f"Ошибка загрузки данных с S3 ({e})"
+    logging.info(answer)
+    return StatusResponse(status=answer)
+
+
+@router.delete("/remove_all", response_model=StatusResponse)
+async def remove_all(request: Request):
+    """
+    Удаляет из сервиса модели и данные
+    """
+    request.app.ml_models = {}
+    request.app.data = []
+    return StatusResponse(status="Все данные и модели удалены")

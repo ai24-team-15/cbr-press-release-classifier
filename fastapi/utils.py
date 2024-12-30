@@ -1,23 +1,23 @@
 import os
 from csv import DictReader, DictWriter
 import logging
-import pandas as pd
-from models import Datum
-from pydantic import ValidationError
-import re
 import json
-from nltk.corpus import stopwords
-from pymystem3 import Mystem
+import re
 import pickle
+import pandas as pd
+from nltk.corpus import stopwords
+from pydantic import ValidationError
+from pymystem3 import Mystem
+from models import Datum
 from settings import settings
 
 
-def load_data_from_file() -> list[dict]:
+def load_data_from_file(filename=f"{settings.data_path}/data.csv") -> list[dict]:
     """
     Загрузка данных из файла
     """
     result = []
-    filename = f"{settings.data_path}/data.csv"
+
     if os.path.isfile(filename):
         with open(filename, "r", encoding="UTF-8") as f:
             reader = DictReader(f)
@@ -63,12 +63,8 @@ def load_models_from_file() -> dict:
                 result[key] = value
                 result[key]["pipeline"] = pipeline
                 logging.info("Модель %s загружена", key)
-            except Exception as e:
-                logging.warning(
-                    "Невозможно открыть файл %s, модель не загружена (e)",
-                    pkl_filename,
-                    e,
-                )
+            except OSError as e:
+                logging.warning("Невозможно открыть файл %s, модель не загружена (%s)", pkl_filename, e)
     else:
         result = {}
     return result
@@ -84,7 +80,7 @@ def save_models_to_file(models: dict):
             with open(pkl_filename, "wb") as f:
                 pickle.dump(value["pipeline"], f)
             logging.info("Модель %s сохранена", key)
-        except Exception as e:
+        except OSError as e:
             logging.warning("Невозможно сохранить модель %s (%s)", key, e)
         value.pop("pipeline", None)
     json_filename = f"{settings.models_path}/models.json"
@@ -92,12 +88,20 @@ def save_models_to_file(models: dict):
         json.dump(models, f)
 
 
+stop_words = set(stopwords.words("russian"))
+stopwords_filename = f"{settings.data_path}/stopwords.txt"
+if os.path.isfile(stopwords_filename):
+    with open(stopwords_filename, "r", encoding="UTF-8") as fsw:
+        words = fsw.read().splitlines()
+        stop_words |= set(words)
+        print(len(stop_words))
+
+
 def preprocessor(text):
     """
     Препроцессор для векторизации
     """
     mystem = Mystem()
-    stop_words = set(stopwords.words("russian"))
     text = text.lower()
     regex = re.compile("[^а-я А-ЯЁё]")
     text = regex.sub(" ", text)
@@ -119,5 +123,37 @@ def prepare_data(data_dict):
     cur_pr = df.tail(1)
     df = df[:-1]
     X = df.drop(["target_categorial", "target_absolute", "target_relative"], axis=1)
-    y = df["target_categorial"]
+    y = df["target_categorial"].values
     return X, y, cur_pr
+
+
+def train_model(model, X, y):
+    "Обучение модели"
+    model.fit(X, y)
+    return model
+
+
+def calc_metrics_utils(model, X, y, window):
+    """
+    Функция для тестирования наших моделей.
+    Зададим начальный порог и будем обучать,
+    модель на наблюдениях до порога,
+    а тестировать на одном наблюдении после.
+    Двигая порог протестируем нашу модель.
+    И потом сравним с истинными ответами.
+    """
+    y_preds = []
+    y_trues = []
+    y_preds_proba = []
+    for threshold in range(window, X.shape[0]):
+        X_train = X[:threshold]
+        X_test = X[threshold:]
+        y_train = y[:threshold]
+        y_test = y[threshold:]
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test[0].reshape(1, -1))
+        y_pred_proba = model.predict_proba(X_test[0].reshape(1, -1))
+        y_preds.append(y_pred.item())
+        y_trues.append(y_test[0])
+        y_preds_proba.append(y_pred_proba[0])
+    return y_preds, y_preds_proba, y_trues

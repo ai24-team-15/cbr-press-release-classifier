@@ -1,7 +1,7 @@
-import uvicorn
-from fastapi import FastAPI
 from contextlib import asynccontextmanager
 import logging
+import uvicorn
+from fastapi import FastAPI
 from router import router
 from settings import settings
 from utils import (
@@ -21,13 +21,16 @@ logging.basicConfig(
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(application: FastAPI):
+    """
+    Выполнение до запуска и после завершения сервиса
+    """
     logging.info("Запуск сервиса")
-    app.data = load_data_from_file()
-    app.ml_models = load_models_from_file()
+    application.data = load_data_from_file()
+    application.ml_models = load_models_from_file()
     yield
-    save_data_to_file(app.data)
-    save_models_to_file(app.ml_models)
+    save_data_to_file(application.data)
+    save_models_to_file(application.ml_models)
     logging.info("Остановка сервиса")
 
 
