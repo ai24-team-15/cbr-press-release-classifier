@@ -94,6 +94,11 @@ predict_page = st.Page(
     title="Предсказание",
 )
 
+metrics_page = st.Page(
+    "pages/machine_learning/metrics.py",
+    title="Метрики",
+)
+
 # Настройка навигации между страницами
 pg = st.navigation(
     {
@@ -104,7 +109,7 @@ pg = st.navigation(
             wordcloud_page,
             tsne_page
         ],
-        "Машинное обучение": [fit_page, predict_page],
+        "Машинное обучение": [fit_page, predict_page, metrics_page],
     }
 )
 

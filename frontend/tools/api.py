@@ -74,7 +74,7 @@ class ApiClient:
             async with session.post(full_url, headers=self.headers, json=payload) as response:
                 ans = await response.json()
                 return ans
-            
+
     async def calc_metrics(self, model_id: str) -> Dict[str, Any]:
         """
         Получает данные для вычисления метрик.
@@ -85,7 +85,6 @@ class ApiClient:
         """
         async with aiohttp.ClientSession() as session:
             full_url = self.base_url + f'/calc_metrics/{model_id}/30'
-            payload = {'model_id': model_id}
             async with session.get(full_url) as response:
                 ans = await response.json()
                 return ans

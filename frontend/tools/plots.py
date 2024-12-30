@@ -1,4 +1,4 @@
-from typing import Dict, Set
+from typing import Dict, Set, List, Any
 import plotly.express as px
 from plotly.subplots import make_subplots
 from plotly import graph_objects as go
@@ -7,6 +7,10 @@ from wordcloud import WordCloud
 import streamlit as st
 import pandas as pd
 import numpy as np
+from sklearn.metrics import auc, roc_curve, confusion_matrix
+from sklearn.preprocessing import label_binarize
+
+from tools.utils import CATEGORIAL_NAMES, COLORS
 
 
 def plot_pie(data: pd.DataFrame, colors: Dict[str, str]) -> go.Figure:
@@ -274,6 +278,158 @@ def plot_linspace(
         title=title,
         title_font={'size': 18, 'color': 'black', 'weight': 'bold'},
         title_x=0.5,
+    )
+
+    return fig
+
+
+def create_roc_curve(
+        y_true: List[int],
+        y_score: np.array,
+        classes: List[int],
+        model_name: str
+) -> List[go.Scatter]:
+    """
+    Создает ROC-кривые для многоклассовой классификации.
+
+    Параметры:
+        y_true (List[int]): Список истинных меток классов.
+        y_score (List[List[float]]): Прогнозируемые вероятности для каждого класса.
+        classes (List[int]): Список всех уникальных меток классов.
+        model_name (str): Название модели, отображаемое в легенде.
+
+    Возвращает:
+        List[go.Scatter]: Список объектов Scatter для построения ROC-кривых в Plotly.
+    """
+    # Бинаризуем истинные метки классов
+    y_bin = label_binarize(y_true, classes=classes)
+
+    # Словари для хранения значений FPR, TPR и AUC для каждого класса
+    fpr: Dict[int, List[float]] = {}
+    tpr: Dict[int, List[float]] = {}
+    roc_auc: Dict[int, float] = {}
+
+    # Вычисляем FPR, TPR и AUC для каждого класса
+    for i in range(len(classes)):
+        fpr[i], tpr[i], _ = roc_curve(y_bin[:, i], y_score[:, i])
+        roc_auc[i] = auc(fpr[i], tpr[i])
+
+    # Создаем список графиков ROC-кривых
+    traces: List[go.Scatter] = []
+    n_classes = len(classes)
+    for i in range(n_classes):
+        traces.append(go.Scatter(
+            x=fpr[i],  # False Positive Rate для текущего класса
+            y=tpr[i],  # True Positive Rate для текущего класса
+            mode='lines',  # Линия графика
+            # Название класса и AUC
+            name=f'{model_name} - {CATEGORIAL_NAMES[classes[i]]} (AUC = {roc_auc[i]:.2f})',
+            line={'color': COLORS[classes[i]], 'width': 2}  # Настройка цвета и толщины линии
+        ))
+
+    return traces
+
+
+def plot_confusion_matrix(data: Dict[str, Any]) -> go.Figure:
+    """
+    Функция для отображения матрицы ошибок для нескольких моделей с использованием Plotly.
+
+    Параметры:
+        data (Dict[str, Any]): Словарь, где ключи — это идентификаторы моделей,
+                                а значения — это данные с истинными метками ('y_trues')
+                                и предсказанными метками ('y_preds').
+
+    Возвращает:
+        go.Figure: Визуализация матрицы ошибок с помощью Plotly.
+    """
+    num_models = len(data)  # Количество моделей
+
+    fig = make_subplots(
+            rows=1, cols=num_models,
+            subplot_titles=list(data.keys())
+        )
+
+    # Обрабатываем каждую модель в словаре data
+    for i, (model_id, data_model) in enumerate(data.items()):
+        # Вычисляем матрицу ошибок для текущей модели
+        cm = confusion_matrix(data_model['y_trues'], data_model['y_preds'])
+
+        # Преобразуем матрицу в DataFrame для удобства
+        cm_df = pd.DataFrame(cm, index=['-1', '0', '1'], columns=['-1', '0', '1'])
+
+        cm_df = cm_df.iloc[:, [2, 1, 0]]
+
+        # Добавляем график для каждой модели
+        fig.add_trace(go.Heatmap(
+            z=cm_df.values,  # Значения для тепловой карты
+            x=cm_df.columns,  # Метки по оси X (предсказанные метки)
+            y=cm_df.index,  # Метки по оси Y (истинные метки)
+            colorscale='Viridis',  # Цветовая схема
+            showscale=True,
+            name=model_id,  # Название модели в легенде
+            text=cm_df.values,  # Значения для отображения в ячейках
+            texttemplate='%{text}',  # Шаблон для отображения значений
+            textfont={'size': 32, 'color': 'white'}  # Настройки шрифта для текста
+        ), row=1, col=i+1)
+        fig.update_xaxes(title_text='Предсказанные ответы', row=1, col=i+1)
+        if i < 1:
+            fig.update_yaxes(title_text='Реальные классы', row=1, col=i+1)
+
+    # Настройки макета для графика
+    fig.update_layout(
+        showlegend=True  # Показываем легенду для каждой модели
+    )
+
+    return fig
+
+
+def plot_auc(data: Dict[str, Any]) -> go.Figure:
+    """
+    Строит графики ROC AUC для нескольких моделей в формате сетки.
+
+    Args:
+        data (Dict[str, Any]): Словарь, где ключи — идентификаторы моделей (model_id),
+                               а значения — данные модели, включающие:
+                               - `y_trues`: истинные метки классов,
+                               - `y_pred_probas`: вероятности предсказаний.
+
+    Returns:
+        go.Figure: График Plotly с сеткой, содержащей ROC-кривые для каждой модели.
+    """
+    traces = []  # Список для хранения ROC-кривых для каждой модели
+
+    # Генерация ROC-кривых для каждой модели
+    for i, (model_id, data_model) in enumerate(data.items()):
+        traces.append(
+            create_roc_curve(
+                data_model['y_trues'],  # Истинные метки классов
+                np.array(data_model['y_pred_probas']),  # Предсказанные вероятности
+                [-1, 0, 1],  # Классы
+                model_id  # Идентификатор модели
+            )
+        )
+
+    # Создание объекта с сеткой графиков
+    fig = make_subplots(
+        rows=1, cols=len(traces),  # Одна строка, количество столбцов соответствует числу моделей
+        subplot_titles=list(data.keys())  # Заголовки графиков — идентификаторы моделей
+    )
+
+    # Добавление графиков в сетку
+    for i, trace in enumerate(traces):
+        for t in trace:  # Добавляем каждую кривую ROC из текущей модели
+            fig.add_trace(t, row=1, col=i + 1)
+
+        # Настройка осей X для каждого графика
+        fig.update_xaxes(title_text='False Positive Rate', row=1, col=i + 1)
+
+        # Настройка осей Y только для первого графика
+        if i < 1:
+            fig.update_yaxes(title_text='True Positive Rate', row=1, col=i + 1)
+
+    # Общие настройки для графика
+    fig.update_layout(
+        showlegend=True  # Включение легенды
     )
 
     return fig

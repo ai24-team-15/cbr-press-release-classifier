@@ -1,5 +1,5 @@
 import re
-from typing import Union, List, Dict, Set
+from typing import Union, List, Dict, Set, Any
 from collections import Counter
 import os
 
@@ -10,6 +10,7 @@ from pymystem3 import Mystem
 import streamlit as st
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.manifold import TSNE
+from sklearn.metrics import classification_report, roc_auc_score
 import aiohttp
 
 # Загрузка необходимых ресурсов NLTK
@@ -75,6 +76,30 @@ def get_preprocess_texts(df: pd.DataFrame, class_cat: Union[int, None] = None) -
     texts_raw = ' '.join(df.to_list())  # Объединение текстов в одну строку
     texts = preprocessing_release(texts_raw)  # Предобработка текста
     return texts
+
+
+def check_refresh() -> pd.DataFrame:
+    """
+    Проверяет наличие данных в session_state или их загрузка из файла.
+
+    Возвращает:
+        pd.DataFrame: DataFrame с данными.
+    """
+    # Проверка наличия данных в session_state или их загрузка из файла
+    if "data" in st.session_state:
+        # Используем данные, уже загруженные в session_state
+        data: pd.DataFrame = st.session_state["data"]
+    else:
+        # Если данные не загружены, читаем их из файла по умолчанию
+        data: pd.DataFrame = pd.read_csv("./data/cbr-press-releases.csv")
+        st.session_state["data"] = data
+        st.session_state["other_data"] = False
+
+    # Добавление колонки с категориями, если она отсутствует
+    if "target_categorial_name" not in data.columns:
+        data["target_categorial_name"] = data.target_categorial.map(CATEGORIAL_NAMES)
+
+    return data
 
 
 @st.cache_data
@@ -180,3 +205,73 @@ def get_data_for_wordclouds(data: pd.DataFrame) -> Dict[str, Union[Dict[int, Dic
     common_words = calc_common_words(*frequencies.values())  # Общие слова между категориями
 
     return {'data': frequencies, 'common_words': common_words, 'cnt_words_all_classes': cnt_words_all_classes}
+
+
+def calc_metrics(data: Dict[str, Any]) -> pd.DataFrame:
+    """
+    Вычисляет метрики классификации для каждой модели на основе предоставленных данных.
+
+    Args:
+        data (Dict[str, Any]): Словарь, где ключи — идентификаторы моделей (model_id),
+                               а значения — данные, содержащие истинные метки (`y_trues`),
+                               предсказанные метки (`y_preds`) и вероятности предсказаний (`y_pred_probas`).
+
+    Returns:
+        pd.DataFrame: Мультииндексированный DataFrame, где строки соответствуют классам и агрегированным метрикам,
+                      а столбцы содержат метрики для каждой модели.
+    """
+    df = pd.DataFrame()  # Инициализация итогового DataFrame
+    targets = {'-1': 'Снижение ставки', '0': 'Ставка без изменений', '1': 'Повышение ставки'}
+    for model_id, data_model in data.items():
+        # Создание отчета классификации в виде словаря
+        data_report = classification_report(
+            data_model['y_trues'],
+            data_model['y_preds'],
+            output_dict=True
+        )
+
+        # Преобразование отчета в DataFrame
+        metrics = [value for key, value in data_report.items() if key != 'accuracy']
+        metrics = pd.DataFrame(metrics)
+
+        # Настройка индексов, заменяя числовые классы на текстовые описания
+        idx = list(data_report.keys())
+        idx.remove('accuracy')
+        metrics['class'] = idx
+        metrics['class'] = metrics['class'].map(lambda x: targets.get(x, x))
+        metrics.set_index('class', inplace=True)
+
+        # Вычисление ROC AUC для стратегий "один против всех" (OVR) и "один против одного" (OVO)
+        roc_auc_ovo = roc_auc_score(
+            data_model['y_trues'],
+            data_model['y_pred_probas'],
+            average='macro',
+            multi_class='ovo'
+        )
+        roc_auc_ovr = roc_auc_score(
+            data_model['y_trues'],
+            data_model['y_pred_probas'],
+            average='macro',
+            multi_class='ovr'
+        )
+
+        # Добавление ROC AUC метрик в строку 'macro avg'
+        metrics.loc['macro avg', 'roc_auc_ovr'] = roc_auc_ovr
+        metrics.loc['macro avg', 'roc_auc_ovo'] = roc_auc_ovo
+
+        # Добавление общей точности (accuracy) в отдельную строку
+        metrics.loc[' ', 'accuracy'] = data_report['accuracy']
+
+        # Создание мультииндекса для колонок (модель + метрика)
+        metrics.columns = pd.MultiIndex.from_tuples(
+            [(model_id, column) for column in metrics.columns],
+            names=['model_id', 'metric']
+        )
+
+        # Перестановка колонок для удобства чтения
+        metrics = metrics.iloc[:, [0, 1, 2, 4, 5, 6, 3]]
+
+        # Объединение текущих метрик с итоговым DataFrame
+        df = pd.concat([df, metrics], axis=1)
+
+    return df
