@@ -2,6 +2,7 @@ import json
 from typing import Any, Dict, List
 
 import aiohttp
+import pandas as pd
 from tools.config import API_URL
 
 
@@ -14,6 +15,25 @@ class ApiClient:
     def __init__(self, base_url: str):
         self.base_url: str = base_url
         self.headers: Dict[str, str] = {"Content-Type": "application/json"}
+
+    async def sync_data(self) -> str:
+        """
+        Забирает данные из s3 на API.
+        """
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.base_url + '/sync_data') as response:
+                resp = await response.json()
+                return resp['status']
+
+    async def get_data(self) -> None:
+        """
+        Получает данные из API.
+        """
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.base_url + '/get_data') as response:
+                data = await response.json()
+                data = pd.DataFrame(data['data'])
+                data.to_csv('./data/cbr-press-releases.csv')
 
     async def get_models(self, url: str) -> List[str]:
         """
@@ -86,6 +106,15 @@ class ApiClient:
         async with aiohttp.ClientSession() as session:
             full_url = self.base_url + f'/calc_metrics/{model_id}/30'
             async with session.get(full_url) as response:
+                ans = await response.json()
+                return ans
+
+    async def remove_all(self):
+        """
+        Удаляет все данные и модели из API.
+        """
+        async with aiohttp.ClientSession() as session:
+            async with session.delete(self.base_url + '/remove_all') as response:
                 ans = await response.json()
                 return ans
 
