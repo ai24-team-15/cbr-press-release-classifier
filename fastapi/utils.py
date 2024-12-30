@@ -94,7 +94,6 @@ if os.path.isfile(stopwords_filename):
     with open(stopwords_filename, "r", encoding="UTF-8") as fsw:
         words = fsw.read().splitlines()
         stop_words |= set(words)
-        print(len(stop_words))
 
 
 def preprocessor(text):

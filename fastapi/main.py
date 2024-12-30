@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 import logging
 import uvicorn
+import nltk
 from fastapi import FastAPI
 from router import router
 from settings import settings
@@ -10,6 +11,9 @@ from utils import (
     save_data_to_file,
     save_models_to_file,
 )
+
+
+nltk.download('stopwords')
 
 
 logging.basicConfig(
