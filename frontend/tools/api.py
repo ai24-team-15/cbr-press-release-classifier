@@ -28,17 +28,19 @@ class ApiClient:
                 models = await response.json()
                 return models['models']
 
-    async def predict(self, url: str, model_id: str) -> Dict[str, Any]:
+    async def predict(self, url: str, model_id: str, release: str) -> Dict[str, Any]:
         """
         Запрашивает предсказание от указанной модели.
 
         :param url: Путь к API для предсказания.
         :param model_id: Идентификатор модели.
+        :param release: Текст пресс-релиза
         :return: Ответ от API с результатами предсказания.
         """
         full_url = self.base_url + url
         async with aiohttp.ClientSession() as session:
-            async with session.get(f'{full_url}/{model_id}') as response:
+            payload = {'model_id': model_id, 'release': release}
+            async with session.post(full_url, headers=self.headers, json=payload) as response:
                 answer = await response.json()
                 return answer
 
@@ -70,6 +72,21 @@ class ApiClient:
         async with aiohttp.ClientSession() as session:
             full_url = self.base_url + url
             async with session.post(full_url, headers=self.headers, json=payload) as response:
+                ans = await response.json()
+                return ans
+            
+    async def calc_metrics(self, model_id: str) -> Dict[str, Any]:
+        """
+        Получает данные для вычисления метрик.
+
+        :param url: Путь к API для вычисления метрик.
+        :param model_id: Идентификатор модели.
+        :return: Ответ от API с данными для вычисления метрик.
+        """
+        async with aiohttp.ClientSession() as session:
+            full_url = self.base_url + f'/calc_metrics/{model_id}/30'
+            payload = {'model_id': model_id}
+            async with session.get(full_url) as response:
                 ans = await response.json()
                 return ans
 
