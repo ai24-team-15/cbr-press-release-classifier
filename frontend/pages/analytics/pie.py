@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
 from tools.plots import plot_pie
-from tools.utils import COLORS, CATEGORIAL_NAMES
+from tools.utils import COLORS
 from tools.config import log as logger
+from tools.utils import check_refresh
 
 
 # Отображение подзаголовка в приложении Streamlit
@@ -11,19 +12,7 @@ st.subheader("Распределение решений по ключевой с
 # Логирование начала процесса построения графиков
 logger.info("Начало построения графиков распределения по категориям.")
 
-# Проверка наличия данных в session_state или их загрузка из файла
-if "data" in st.session_state:
-    # Используем данные, уже загруженные в session_state
-    data: pd.DataFrame = st.session_state["data"]
-else:
-    # Если данные не загружены, читаем их из файла по умолчанию
-    data: pd.DataFrame = pd.read_csv("./data/cbr-press-releases.csv")
-    st.session_state["data"] = data
-    st.session_state["other_data"] = False
-
-# Добавление колонки с категориями, если она отсутствует
-if "target_categorial_name" not in data.columns:
-    data["target_categorial_name"] = data.target_categorial.map(CATEGORIAL_NAMES)
+data = check_refresh()
 
 # Подготовка данных для круговой диаграммы
 # Группировка данных по категориям и расчет доли каждой категории

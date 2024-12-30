@@ -1,7 +1,6 @@
 import streamlit as st
-import pandas as pd
 
-from tools.utils import COLORS, CATEGORIAL_NAMES
+from tools.utils import COLORS, check_refresh
 from tools.plots import plot_len_text, plot_boxplot
 from tools.config import log as logger
 
@@ -12,19 +11,7 @@ st.subheader("Распределение длин текстов релизов"
 # Логирование начала построения графиков
 logger.info("Начало построения графиков длин текстов.")
 
-# Проверка наличия данных в session_state или их загрузка из файла
-if "data" in st.session_state:
-    # Использование данных из session_state
-    data: pd.DataFrame = st.session_state["data"]
-else:
-    # Загрузка данных из локального CSV файла
-    data: pd.DataFrame = pd.read_csv("./data/cbr-press-releases.csv")
-    st.session_state["data"] = data
-    st.session_state["other_data"] = False
-
-# Добавление колонки с категорией, если её нет
-if "target_categorial_name" not in data.columns:
-    data["target_categorial_name"] = data.target_categorial.map(CATEGORIAL_NAMES)
+data = check_refresh()
 
 # Построение графика распределения длин текстов
 st.plotly_chart(plot_len_text(data))
