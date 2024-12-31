@@ -6,6 +6,15 @@
 
 [План работы над проектом.](checkpoint.md)
 
+### Участники проекта
+
+- Ковалева Александра (@ak0va, [github](https://github.com/ak0vacorp)) - куратор проекта
+- Жарковский Дмитрий (@KuBaN_190, [github](https://github.com/KuBaN658))
+- Иванов Иван (@ivanov_ivan_sergevich, [github](https://github.com/Ivanchenko99))
+- Куимов Владислав (@etoenot, [github](https://github.com/eto-enot))
+- Кузьмин Дмитрий (@kuzda, [github](https://github.com/dkzmn))
+- Хадиев Руслан (@firstmodelrus, [github](https://github.com/RuslanKHAI))
+
 ### Базовая часть проекта:
 1. [Парсеры](scraping) пресс-релизов, данных по ключевой ставке, уровням инфляции, курсу доллара США.
 2. [Описание](dataset.md) собранных данных.
@@ -37,11 +46,12 @@
 - *Опционально.* Запустить систему сбора логов ELK командой `docker compose -f docker-compose.elk.yml up -d`.
 - Приложение будет доступно через браузер на порту 8000, система сбора логов - 5601.
 
-### Участники проекта
+### Иллюстрация работы проекта
 
-- Ковалева Александра (@ak0va, [github](https://github.com/ak0vacorp)) - куратор проекта
-- Жарковский Дмитрий (@KuBaN_190, [github](https://github.com/KuBaN658))
-- Иванов Иван (@ivanov_ivan_sergevich, [github](https://github.com/Ivanchenko99))
-- Куимов Владислав (@etoenot, [github](https://github.com/eto-enot))
-- Кузьмин Дмитрий (@kuzda, [github](https://github.com/dkzmn))
-- Хадиев Руслан (@firstmodelrus, [github]())
+Подробную информацию об использовании всех функций приложения см. в [отчете](report.md).
+
+![screencast](docs/app_screencast.gif)
+
+### Иллюстрация работы системы сбора логов
+
+![screencast](docs/logs_screencast.gif)
