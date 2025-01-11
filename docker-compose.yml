@@ -20,7 +20,7 @@ services:
       - cbr-network
 
   ui:
-    build: ./frontend
+    build: ./cbr_ui
     container_name: cbr-ui
     command: >
       streamlit run cbr-ui/main.py
