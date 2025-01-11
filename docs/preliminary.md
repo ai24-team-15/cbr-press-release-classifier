@@ -160,172 +160,94 @@ TODO: Описать, какие модели попробовали
 
 # Метрики качества моделей
 
-TODO: Добавить гиперпарметры, убрать лишние метрики
-
 <table border="1" class="dataframe">
   <thead>
     <tr>
       <th>Модель</th>
-      <th>Accuracy</th>
-      <th>F-score</th>
-      <th>Precision</th>
-      <th>Recall</th>
-      <th>ROC AUC OvR</th>
+      <th>Гиперпараметры</th>
       <th>ROC AUC OvO</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>Минимальный бейзлайн</th>
-      <td>0.663158</td>
-      <td>0.667893</td>
-      <td>0.669919</td>
-      <td>0.666111</td>
-      <td>0.745010</td>
+      <td>-</td>
       <td>0.749583</td>
     </tr>
     <tr>
       <th>BoW (тексты релизов) + LogReg с L1-регуляризацией</th>
-      <td>0.621212</td>
-      <td>0.627058</td>
-      <td>0.642995</td>
-      <td>0.619311</td>
-      <td>0.766783</td>
+      <td>C=7.241655172413794, penalty='l1', solver='liblinear'</td>
       <td>0.770722</td>
     </tr>
     <tr>
       <th>BoW + LogReg с L1-, L2-регуляризацией</th>
-      <td>0.742424</td>
-      <td>0.742770</td>
-      <td>0.748213</td>
-      <td>0.739544</td>
-      <td>0.871739</td>
+      <td rowspan="3">C=10, l1_ratio=0.1, max_iter=10000, penalty='elasticnet', solver='saga'</td>
       <td>0.873204</td>
     </tr>
     <tr>
       <th>BoW (тексты релизов + заголовки) + LogReg</th>
-      <td>0.742424</td>
-      <td>0.742770</td>
-      <td>0.748213</td>
-      <td>0.739544</td>
-      <td>0.869994</td>
       <td>0.871488</td>
     </tr>
     <tr>
       <th>BoW (тексты релизов + числовые переменные) + LogReg</th>
-      <td>0.696970</td>
-      <td>0.695807</td>
-      <td>0.699183</td>
-      <td>0.694222</td>
-      <td>0.861922</td>
       <td>0.863797</td>
     </tr>
     <tr>
       <th>BoW (тексты релизов) + SVM</th>
-      <td>0.681818</td>
-      <td>0.687595</td>
-      <td>0.709524</td>
-      <td>0.678521</td>
-      <td>0.835474</td>
+      <td>C=7, kernel='linear', probability=True</td>
       <td>0.837417</td>
     </tr>
     <tr>
       <th>TF-IDF (тексты релизов) + LogReg с L1-регуляризацией</th>
-      <td>0.606061</td>
-      <td>0.613057</td>
-      <td>0.643850</td>
-      <td>0.601767</td>
-      <td>0.784182</td>
+      <td>C=10.0, penalty='l1', solver='liblinear'</td>
       <td>0.787614</td>
     </tr>
     <tr>
       <th>TF-IDF (тексты релизов c доп. фильтрацией) + LogReg</th>
-      <td>0.757576</td>
-      <td>0.761220</td>
-      <td>0.769459</td>
-      <td>0.756484</td>
-      <td>0.901642</td>
+      <td rowspan="3">C=10, l1_ratio=0.1, max_iter=10000, penalty='elasticnet', solver='saga'</td>
       <td>0.903270</td>
     </tr>
     <tr>
       <th>TF-IDF (тексты релизов + заголовки) + LogReg</th>
-      <td>0.712121</td>
-      <td>0.717903</td>
-      <td>0.737500</td>
-      <td>0.709954</td>
-      <td>0.878747</td>
       <td>0.881341</td>
     </tr>
     <tr>
       <th>TF-IDF (тексты релизов + числовые переменные) + LogReg</th>
-      <td>0.681818</td>
-      <td>0.688457</td>
-      <td>0.731248</td>
-      <td>0.677314</td>
-      <td>0.835872</td>
       <td>0.837195</td>
     </tr>
     <tr class="yellow">
       <th>TF-IDF (тексты релизов) + SVM</th>
-      <td>0.772727</td>
-      <td>0.776923</td>
-      <td>0.790584</td>
-      <td>0.770372</td>
-      <td>0.926754</td>
+      <td>C=10, kernel='linear', probability=True</td>
       <td>0.927695</td>
     </tr>
     <tr>
       <th>N-граммы плюс Naive Bayes</th>
-      <td>0.636364</td>
-      <td>0.629318</td>
-      <td>0.628042</td>
-      <td>0.642321</td>
-      <td>0.772995</td>
+      <td>ngram_range(3, 6)</td>
       <td>0.777142</td>
     </tr>
     <tr>
       <th>Word2Vec + LogReg</th>
-      <td>0.560606</td>
-      <td>0.563787</td>
-      <td>0.562041</td>
-      <td>0.566807</td>
-      <td>0.727310</td>
+      <td>C=1, l1_ratio=0.9, max_iter=10000, penalty='elasticnet', solver='saga'</td>
       <td>0.732520</td>
     </tr>
     <tr>
       <th>Word2Vec (предобученная модель) + LogReg</th>
-      <td>0.590909</td>
-      <td>0.603136</td>
-      <td>0.628721</td>
-      <td>0.590929</td>
-      <td>0.760629</td>
+      <td>C=0.1, l1_ratio=0.1, max_iter=10000, penalty='elasticnet', solver='saga'</td>
       <td>0.765176</td>
     </tr>
     <tr>
       <th>Word2Vec (предобученная модель с фильтрацией) + LogReg</th>
-      <td>0.500000</td>
-      <td>0.513921</td>
-      <td>0.525107</td>
-      <td>0.506388</td>
-      <td>0.693653</td>
+      <td>C=10, l1_ratio=0.5, max_iter=10000, penalty='elasticnet', solver='saga'</td>
       <td>0.697273</td>
     </tr>
     <tr>
       <th>Word2Vec (предобученная модель) + SVM</th>
-      <td>0.560606</td>
-      <td>0.569858</td>
-      <td>0.569858</td>
-      <td>0.569858</td>
-      <td>0.743541</td>
+      <td>C=7, kernel='linear', probability=True</td>
       <td>0.749317</td>
     </tr>
     <tr>
-      <th>GloVe + LogReg</th>
-      <td>0.606061</td>
-      <td>0.611108</td>
-      <td>0.684127</td>
-      <td>0.596904</td>
-      <td>0.763597</td>
+      <th>GloVe + SVM</th>
+      <td>C=3, probability=True</td>
       <td>0.768338</td>
     </tr>
   </tbody>
