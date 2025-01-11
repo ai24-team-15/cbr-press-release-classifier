@@ -6,3 +6,4 @@ data/
 __pycache__/
 logs/
 .env
+cbr_ui/.env
