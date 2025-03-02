@@ -20,8 +20,9 @@ def calc_metrics(X, y, model, *, name, plot=True, **params):
     """
     y_preds = []
     y_preds_proba = []
-    model = model(**params)
-    for threshold in range(30, 96):
+    if isinstance(model, type):
+        model = model(**params)
+    for threshold in range(30, y.shape[0]):
         X_train = X[:threshold]
         X_test = X[threshold:]
         y_train = y[:threshold]
