@@ -4,11 +4,23 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 from sklearn.metrics import accuracy_score, f1_score, recall_score, \
     precision_score, roc_auc_score, confusion_matrix, classification_report
+from joblib import Parallel, delayed
 
 
+def _calc_metric(model, X, y, threshold):
+    X_train = X[:threshold]
+    X_test = X[threshold:]
+    y_train = y[:threshold]
+
+    model.fit(X_train, y_train)
+    
+    y_pred = model.predict(X_test[0].reshape(1, -1))
+    y_pred_proba = model.predict_proba(X_test[0].reshape(1, -1))
+    
+    return (y_pred.item(), y_pred_proba)
 
 
-def calc_metrics(X, y, model, *, name, plot=True, **params):
+def calc_metrics(X, y, model, *, name, plot=True, calc_jobs=1, **params):
     """
     Функция для тестирования наших моделей. 
     Зададим начальный порог и будем обучать, 
@@ -18,21 +30,18 @@ def calc_metrics(X, y, model, *, name, plot=True, **params):
     И потом сравним с истинными ответами. 
     Качество всех наших моделей будем записывать в metrics.csv
     """
-    y_preds = []
-    y_preds_proba = []
+
     if isinstance(model, type):
         model = model(**params)
-    for threshold in range(30, y.shape[0]):
-        X_train = X[:threshold]
-        X_test = X[threshold:]
-        y_train = y[:threshold]
 
-        model.fit(X_train, y_train)
-        y_pred = model.predict(X_test[0].reshape(1, -1))
-        y_pred_proba = model.predict_proba(X_test[0].reshape(1, -1))
-        y_preds.append(y_pred.item())
-        y_preds_proba.append(y_pred_proba)
-
+    results = Parallel(n_jobs=calc_jobs)(
+        delayed(_calc_metric)(model, X, y, threshold)
+        for threshold in range(30, y.shape[0])
+    )
+    
+    y_preds = [x[0] for x in results]
+    y_preds_proba = [x[1] for x in results]
+    
     acc = accuracy_score(y[30:], y_preds)
     f1 = f1_score(y[30:], y_preds, average='macro')
     recall = recall_score(y[30:], y_preds, average='macro')
