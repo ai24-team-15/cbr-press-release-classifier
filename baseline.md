@@ -17,14 +17,14 @@
 
 ### Ноутбуки с экспериментами
 
-- [min_baseline.ipynb](ml/min_baseline.ipynb) - минимальный бейзлайн. Модель предсказывает изменение ставки таким, как в последнем решении.
-- [dummy.ipynb](ml/dummy.ipynb) - простейшее предсказание на основе самого частотного класса (вне рейтинга).
-- [bag_of_words.ipynb](ml/bag_of_words.ipynb) - Bag of Words плюс линейные модели (логистическая регрессия регрессия и SVM).
-- [tf_idf.ipynb](ml/tf_idf.ipynb) - TF-IDF плюс линейные модели. Здесь была получена наилучшая модель.
-- [n_grams_naive_bayes.ipynb](ml/n_grams_naive_bayes.ipynb) - N-граммы плюс наивный байесовский классификатор.
-- [word2vec.ipynb](ml/word2vec.ipynb) - Word2Vec плюс линейная модель.
-- [glove.ipynb](ml/glove.ipynb) - GloVe плюс линейная модель.
-- [pipeline.ipynb](ml/pipeline.ipynb) - пайплайн обучения и применения лучшей модели (TF-IDF + SVM).
+- [min_baseline.ipynb](ml/linear_models/min_baseline.ipynb) - минимальный бейзлайн. Модель предсказывает изменение ставки таким, как в последнем решении.
+- [dummy.ipynb](ml/linear_models/dummy.ipynb) - простейшее предсказание на основе самого частотного класса (вне рейтинга).
+- [bag_of_words.ipynb](ml/linear_models/bag_of_words.ipynb) - Bag of Words плюс линейные модели (логистическая регрессия регрессия и SVM).
+- [tf_idf.ipynb](ml/linear_models/tf_idf.ipynb) - TF-IDF плюс линейные модели. Здесь была получена наилучшая модель.
+- [n_grams_naive_bayes.ipynb](ml/linear_models/n_grams_naive_bayes.ipynb) - N-граммы плюс наивный байесовский классификатор.
+- [word2vec.ipynb](ml/linear_models/word2vec.ipynb) - Word2Vec плюс линейная модель.
+- [glove.ipynb](ml/linear_models/glove.ipynb) - GloVe плюс линейная модель.
+- [pipeline.ipynb](ml/linear_models/pipeline.ipynb) - пайплайн обучения и применения лучшей модели (TF-IDF + SVM).
 
 ### Метрики исследованных моделей
 
