@@ -1,3 +1,7 @@
+---
+marp: true
+---
+
 <!-- theme: default -->
 <!-- paginate: true -->
 <!-- lang: ru -->
@@ -264,6 +268,123 @@
 </div>
 <div>
 Случайный лес показал качество хуже более простых алгоритмов, возможно он требует больше данных для обучения.
+</div>
+</div>
+
+---
+
+# Нелинейные модели: XGBoost
+
+Пайплайн для модели XGBoost включает в себя:
+- TF-IDF векторизация текстов пресс-релизов
+- XGBoost-классификатор
+
+---
+
+<style scoped>
+    table, td, th {
+        width: 100%;
+    }
+</style>
+
+# XGBoost: метрики качества
+
+<div class="container">
+<div>
+
+| Метрика     | Значение |
+|-------------|----------|
+| Accuracy    | 0.632353 |
+| F1-score    | 0.633905 |
+| Recall      | 0.625271 | 
+| Precision   | 0.653274 |
+| ROC-AUC OvR | 0.766337 |
+| ROC-AUC OvO | 0.771152 |
+
+</div>
+<div class="item-img">
+    <img alt="img" src="xgboost_cm.png"/>
+</div>
+<div>
+XGBoost показал accuracy лучше других бустингов, но хуже более простых алгоритмов.
+</div>
+</div>
+
+---
+
+# Нелинейные модели: Catboost
+
+Пайплайн для модели Catboost включает в себя:
+- TF-IDF векторизация текстов пресс-релизов
+- Catboost-классификатор
+
+---
+
+<style scoped>
+    table, td, th {
+        width: 100%;
+    }
+</style>
+
+# Catboost: метрики качества
+
+<div class="container">
+<div>
+
+| Метрика     | Значение |
+|-------------|----------|
+| Accuracy    | 0.514706 |
+| F1-score    | 0.520886 |
+| Recall      | 0.506572 | 
+| Precision   | 0.571789 |
+| ROC-AUC OvR | 0.701963 |
+| ROC-AUC OvO | 0.709235 |
+
+</div>
+<div class="item-img">
+    <img alt="img" src="catboost_cm.png"/>
+</div>
+<div>
+Catboost показал качество хуже другх бустингов.
+</div>
+</div>
+
+---
+
+# Нелинейные модели: LigthGBM
+
+Пайплайн для модели LigthGBM включает в себя:
+- TF-IDF векторизация текстов пресс-релизов
+- LigthGBM-классификатор
+
+---
+
+<style scoped>
+    table, td, th {
+        width: 100%;
+    }
+</style>
+
+# LigthGBM: метрики качества
+
+<div class="container">
+<div>
+
+| Метрика     | Значение |
+|-------------|----------|
+| Accuracy    | 0.588235 |
+| F1-score    | 0.598482 |
+| Recall      | 0.584844 | 
+| Precision   | 0.637146 |
+| ROC-AUC OvR | 0.789938 |
+| ROC-AUC OvO | 0.796427 |
+
+</div>
+<div class="item-img">
+    <img alt="img" src="lightgbm_cm.png"/>
+</div>
+<div>
+LigthGBM показал качество ROC-AUC лучше, чем другие бустинги, но хуже более простых алгоритмов.
 </div>
 </div>
 
