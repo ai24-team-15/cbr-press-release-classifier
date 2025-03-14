@@ -23,6 +23,31 @@
     }
 </style>
 
+<style>
+    .container {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-template-rows: min-content;
+    }
+    
+    .item-img {
+        grid-column-start: 2;
+        grid-row-end: span 2;
+        text-align: right;
+    }
+    
+    table {
+        font-size: 16px;
+        width: 50%;
+        align: center;
+    }
+    
+    img[alt~="image"] {
+        float: right;
+        width: 80%;
+    }
+</style>
+
 # Команда 15
 
 ## Классификатор пресс-релизов ЦБ с предсказанием будущей ключевой ставки
@@ -70,25 +95,16 @@
 
 ---
 
-<style>
-img[alt~="image"] {
-  float: right;
-  width: 50%;
-}
-</style>
-
-<style>
-  table {
-    font-size: 16px;
-    width: 50%;
-    align: center;
-
-  }
+<style scoped>
+    table, td, th {
+        width: 100%;
+    }
 </style>
 
 # Лучшая линейная модель: метрики качества
 
-![image](svc_cm.png)
+<div class="container">
+<div>
 
 | Метрика     | Значение |
 |-------------|----------|
@@ -99,6 +115,15 @@ img[alt~="image"] {
 | ROC-AUC OvR | 0.840529 |
 | ROC-AUC OvO | 0.844115 |
 
+</div>
+<div class="item-img">
+    <img alt="img" src="svc_cm.png"/>
+</div>
+<div>
+описание
+</div>
+</div>
+
 ---
 
 # Нелинейные модели: KNN
@@ -108,15 +133,18 @@ img[alt~="image"] {
 - Отбор признаков при помощи логистической регрессии с L1-регуляризацией
 - KNN-классификатор
 
-По метрикам ROC-AUC качество несколько уменьшилось относительно линейной модели, но по другим метрикам результат улучшился.
-
 ---
+
+<style scoped>
+    table, td, th {
+        width: 100%;
+    }
+</style>
 
 # KNN: метрики качества
 
-
-
-![image](knn_cm.png)
+<div class="container">
+<div>
 
 | Метрика     | Значение |
 |-------------|----------|
@@ -126,6 +154,15 @@ img[alt~="image"] {
 | Precision   | 0.779259 |
 | ROC-AUC OvR | 0.834168 |
 | ROC-AUC OvO | 0.835548 |
+
+</div>
+<div class="item-img">
+    <img alt="img" src="knn_cm.png"/>
+</div>
+<div>
+По метрикам ROC-AUC качество несколько уменьшилось относительно линейной модели, но по другим метрикам результат улучшился.
+</div>
+</div>
 
 ---
 
@@ -142,9 +179,16 @@ img[alt~="image"] {
 
 ---
 
+<style scoped>
+    table, td, th {
+        width: 100%;
+    }
+</style>
+
 # TimeSeries: метрики качества
 
-![image](timeseries_cm.png)
+<div class="container">
+<div>
 
 | Метрика     | Значение |
 |-------------|----------|
@@ -154,6 +198,15 @@ img[alt~="image"] {
 | Precision   | 0.717836 |
 | ROC-AUC OvR | 0.806009 |
 | ROC-AUC OvO | 0.809599 |
+
+</div>
+<div class="item-img">
+    <img alt="img" src="timeseries_cm.png"/>
+</div>
+<div>
+Модель одинаково хорошо детектирует все виды классов, и не разу не перепутала повышение ставки с понижением.
+</div>
+</div>
 
 ---
 
@@ -166,9 +219,16 @@ img[alt~="image"] {
 
 ---
 
+<style scoped>
+    table, td, th {
+        width: 100%;
+    }
+</style>
+
 # RandomForest: метрики качества
 
-![image](forest_cm.png)
+<div class="container">
+<div>
 
 | Метрика     | Значение |
 |-------------|----------|
@@ -178,6 +238,15 @@ img[alt~="image"] {
 | Precision   | 0.681082 |
 | ROC-AUC OvR | 0.817684 |
 | ROC-AUC OvO | 0.822178 |
+
+</div>
+<div class="item-img">
+    <img alt="img" src="forest_cm.png"/>
+</div>
+<div>
+описание
+</div>
+</div>
 
 ---
 
@@ -190,9 +259,16 @@ img[alt~="image"] {
 
 ---
 
+<style scoped>
+    table, td, th {
+        width: 100%;
+    }
+</style>
+
 # Ансамбль: метрики качества
 
-![image](ensemble_cm.png)
+<div class="container">
+<div>
 
 | Метрика     | Значение |
 |-------------|----------|
@@ -203,9 +279,18 @@ img[alt~="image"] {
 | ROC-AUC OvR | 0.860113 |
 | ROC-AUC OvO | 0.863595 |
 
+</div>
+<div class="item-img">
+    <img alt="img" src="ensemble_cm.png"/>
+</div>
+<div>
+описание
+</div>
+</div>
+
 ---
 
-<style>
+<style scoped>
 img[alt~="center"] {
   margin: 0 auto;
   max-width: 80%;
