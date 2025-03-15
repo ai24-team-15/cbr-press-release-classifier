@@ -1,0 +1,36 @@
+monitoring.enabled: false
+logging.metrics.enabled: false
+
+filebeat.inputs:
+  # отправка логов от сервиса
+  - type: filestream
+    id: cbr_service
+    enabled: true
+    paths:
+      - /cbr_logs/cbr_service*.log*
+    parsers:
+      - multiline:
+          type: pattern
+          pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}'
+          negate: true
+          match: after
+    fields:
+      service: cbr_service
+  
+  # отправка логов от streamlit
+  - type: filestream
+    id: cbr_ui
+    enabled: true
+    paths:
+      - /cbr_logs/cbr_ui*.log*
+    parsers:
+      - multiline:
+          type: pattern
+          pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}'
+          negate: true
+          match: after
+    fields:
+      service: cbr_ui
+
+output.logstash:
+  hosts: ["logstash:5044"]

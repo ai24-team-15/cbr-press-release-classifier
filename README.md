@@ -6,6 +6,15 @@
 
 [План работы над проектом.](checkpoint.md)
 
+### Участники проекта
+
+- Ковалева Александра (@ak0va, [github](https://github.com/ak0vacorp)) - куратор проекта
+- Жарковский Дмитрий (@KuBaN_190, [github](https://github.com/KuBaN658))
+- Иванов Иван (@ivanov_ivan_sergevich, [github](https://github.com/Ivanchenko99))
+- Куимов Владислав (@etoenot, [github](https://github.com/eto-enot))
+- Кузьмин Дмитрий (@kuzda, [github](https://github.com/dkzmn))
+- Хадиев Руслан (@firstmodelrus, [github](https://github.com/RuslanKHAI))
+
 ### Базовая часть проекта:
 1. [Парсеры](scraping) пресс-релизов, данных по ключевой ставке, уровням инфляции, курсу доллара США.
 2. [Описание](dataset.md) собранных данных.
@@ -22,12 +31,28 @@
 3. **Разработка веб-приложения / бота:**
 - Создание интерфейса для демонстрации работы классификатора в реальном времени.
 
+### Сборка и запуск проекта
 
-### Участники проекта
+Имеется три файла конфигурации для Docker Compose:
+- `docker-compose.yml` - включает команды для построения образов fastapi-сервиса и streamlist-приложения.
+- `docker-compose.elk.yml` - конфигурация системы сбора логов ELK. В каталоге `config` расположена конфигурация компонентов ELK. В файле `.env` необходимо задать реквизиты, которые будут использоваться для доступа к ElasticSearch.
+- `docker-compose.deploy.yml` - конфигурация для деплоя на Yandex Cloud. Отличается от первого варианта тем, что использует готовые образы, предварительно загруженные в реестр.
 
-- Ковалева Александра (@ak0va, [github](https://github.com/ak0vacorp)) - куратор проекта
-- Жарковский Дмитрий (@KuBaN_190, [github](https://github.com/KuBaN658))
-- Иванов Иван (@ivanov_ivan_sergevich, [github](https://github.com/Ivanchenko99))
-- Куимов Владислав (@etoenot, [github](https://github.com/eto-enot))
-- Кузьмин Дмитрий (@kuzda, [github](https://github.com/dkzmn))
-- Хадиев Руслан (@firstmodelrus, [github]())
+Процедура сборки и запуска:
+- Склонировать себе данный репозиторий
+- Собрать образы docker для fastapi-сервиса и streamlist-приложения, выполнив команду `docker compose build` в каталоге проекта.
+- Задать настройки приложений в файле `.env` (см. файл `.env_example` для описания параметров).
+- *Опционально.* Задать настройки для системы ELK в файле `.env` (см. файл `.env_example` для описания параметров).
+- Запустить оба приложения командой `docker compose up -d`.
+- *Опционально.* Запустить систему сбора логов ELK командой `docker compose -f docker-compose.elk.yml up -d`.
+- Приложение будет доступно через браузер на порту 8000, система сбора логов - 5601.
+
+### Иллюстрация работы проекта
+
+Подробную информацию об использовании всех функций приложения см. в [отчете](report.md).
+
+![screencast](docs/app_screencast.gif)
+
+### Иллюстрация работы системы сбора логов
+
+![screencast](docs/logs_screencast.gif)
