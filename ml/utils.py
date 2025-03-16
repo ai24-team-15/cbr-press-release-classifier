@@ -6,16 +6,14 @@ from sklearn.metrics import accuracy_score, f1_score, recall_score, \
     precision_score, roc_auc_score, confusion_matrix, classification_report
 
 
-
-
 def calc_metrics(X, y, model, *, name, plot=True, **params):
     """
-    Функция для тестирования наших моделей. 
-    Зададим начальный порог и будем обучать, 
-    модель на наблюдениях до порога, 
-    а тестировать на одном наблюдении после. 
-    Двигая порог протестируем нашу модель. 
-    И потом сравним с истинными ответами. 
+    Функция для тестирования наших моделей.
+    Зададим начальный порог и будем обучать,
+    модель на наблюдениях до порога,
+    а тестировать на одном наблюдении после.
+    Двигая порог протестируем нашу модель.
+    И потом сравним с истинными ответами.
     Качество всех наших моделей будем записывать в metrics.csv
     """
     y_preds = []
@@ -49,14 +47,13 @@ def calc_metrics(X, y, model, *, name, plot=True, **params):
         plt.show()
 
         metrics = pd.DataFrame({
-            'accuracy': acc, 
-            'f1': f1, 
-            'recall': recall, 
-            'precision': precision, 
+            'accuracy': acc,
+            'f1': f1,
+            'recall': recall,
+            'precision': precision,
             'roc_auc_ovr': roc_auc_ovr,
             'roc_auc_ovo': roc_auc_ovo,
             }, index=[name])
         return metrics, model
     else:
         return roc_auc_ovo.item(), model
-    

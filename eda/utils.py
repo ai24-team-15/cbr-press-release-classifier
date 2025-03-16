@@ -39,22 +39,20 @@ PARTS_OF_SPEECH = {
 }
 
 
-
 class Word2VecVectorizer(BaseEstimator, TransformerMixin):
     def __init__(self):
         self.model = None
-    
+
     def fit(self, X, y=None):
         self.model = word2vec.Word2Vec(X, vector_size=300, window=3, workers=8)
         return self
-    
+
     def transform(self, X):
         return np.array([
-            np.mean([self.model.wv[w] for w in words if w in self.model.wv] 
+            np.mean([self.model.wv[w] for w in words if w in self.model.wv]
                     or [np.zeros(self.model.vector_size)], axis=0)
             for words in X
         ])
-    
 
 
 def preprocessing_release(text: str) -> list[str]:
@@ -69,12 +67,12 @@ def preprocessing_release(text: str) -> list[str]:
     return text
 
 
-def get_preprocess_texts(df: pd.DataFrame, class_cat: Union[int, None]=None) -> list[str]:
+def get_preprocess_texts(df: pd.DataFrame, class_cat: Union[int, None] = None) -> list[str]:
     if class_cat is None:
         df = df.release
     else:
         df = df.loc[df.target_category == class_cat, 'release']
-        
+
     texts_raw = ' '.join(df.to_list())
     texts = preprocessing_release(texts_raw)
     return texts
@@ -90,27 +88,27 @@ def get_freq(texts: list[str]) -> dict[str, float]:
 
 def plot_wordcloud_all(data: dict, title: str):
     wordcloud = WordCloud(
-        width=1200, 
-        height=1200, 
-        random_state=42, 
-        background_color='black', 
-        max_words=50, 
-        contour_width=2, 
+        width=1200,
+        height=1200,
+        random_state=42,
+        background_color='black',
+        max_words=50,
+        contour_width=2,
         contour_color='black'
         ).generate_from_frequencies(data)
 
-    plt.figure(figsize=(10,10))
+    plt.figure(figsize=(10, 10))
     plt.grid(visible=False)
     plt.axis('off')
     plt.suptitle(
-        title, 
-        fontsize=16, 
+        title,
+        fontsize=16,
         fontweight='bold'
     )
     plt.imshow(wordcloud)
 
 
-def plot_all_words(data: pd.Series, title: str, ylabel: str, top=15, figsize=(18,10)) -> None:
+def plot_all_words(data: pd.Series, title: str, ylabel: str, top=15, figsize=(18, 10)) -> None:
     plt.figure(figsize=figsize)
     sns.barplot(data=data[:top], orient='h', color='#5975A4')
     plt.suptitle(title, fontsize=16, fontweight="bold")
@@ -122,7 +120,7 @@ def plot_all_words(data: pd.Series, title: str, ylabel: str, top=15, figsize=(18
 def build_vocab(corpus: list[str]) -> dict[str, str]:
     m = Mystem()
     rg = re.compile('[,=]')
-    
+
     struct = m.analyze(' '.join(corpus))
 
     data = filter(lambda item: 'analysis' in item, struct)
@@ -130,16 +128,16 @@ def build_vocab(corpus: list[str]) -> dict[str, str]:
     data = filter(lambda item: len(item) != 0, data)
     data = map(lambda item: item[0], data)
     data = map(lambda item: (item['lex'], PARTS_OF_SPEECH[rg.split(item['gr'])[0]]), data)
-    
+
     return dict(data)
 
 
-def calc_common_words(*cnt_words_dic: dict, top:int=15) -> set[str]:
+def calc_common_words(*cnt_words_dic: dict, top: int = 15) -> set[str]:
     result = set(list(cnt_words_dic[0].keys())[:top])
 
     for dic in cnt_words_dic[1:]:
         result.intersection_update(set(list(dic.keys())[:top]))
-    
+
     return result
 
 
@@ -148,18 +146,18 @@ def plot_wordcloud_per_class(data: dict[int, dict], title: str):
     targets = [-1, 0, 1]
     for target in targets:
         wordcloud = WordCloud(
-                width=1200, 
-                height=1200, 
-                random_state=42, 
-                background_color='black', 
-                max_words=50, 
-                contour_width=2, 
+                width=1200,
+                height=1200,
+                random_state=42,
+                background_color='black',
+                max_words=50,
+                contour_width=2,
                 contour_color='black'
             ).generate_from_frequencies(data[target])
-        
+
         clouds.append(wordcloud)
 
-    fig, axes = plt.subplots(1, 3, figsize=(28,10))
+    fig, axes = plt.subplots(1, 3, figsize=(28, 10))
 
     titles = ['Ставка снизится', 'Ставка не изменится', 'Ставка повысится']
     for ax, cloud, ttl in zip(axes, clouds, titles):
@@ -168,8 +166,8 @@ def plot_wordcloud_per_class(data: dict[int, dict], title: str):
         ax.set_title(ttl)
         ax.imshow(cloud)
     plt.suptitle(
-            title, 
-            fontsize=16, 
+            title,
+            fontsize=16,
             fontweight='bold'
         )
 
@@ -177,11 +175,11 @@ def plot_wordcloud_per_class(data: dict[int, dict], title: str):
 def plot_words_per_class(data: dict[int, dict], title: str, ylabel: str, common_words: set[str], top=15) -> None:
     fig, axes = plt.subplots(1, 3, figsize=(16, 9), layout="constrained")
     fig.suptitle(
-        title, 
-        fontsize=16, 
+        title,
+        fontsize=16,
         fontweight='bold'
         )
-    
+
     for i, (k, v) in enumerate(data.items()):
         words = pd.Series(v)[:top].reset_index()
         words.columns = ('word', 'freq')
@@ -223,34 +221,34 @@ def plot_linspace(X, title: str, df):
 
     fig = go.Figure()
     fig.add_scatter(
-        x=X[pos_index, 0], 
-        y=X[pos_index, 1], 
-        mode='markers', 
-        text=df.date.loc[pos_index], 
+        x=X[pos_index, 0],
+        y=X[pos_index, 1],
+        mode='markers',
+        text=df.date.loc[pos_index],
         name='Повысить',
-        marker=dict(size=10, color=COLORS[1]), 
+        marker=dict(size=10, color=COLORS[1]),
         )
     fig.add_scatter(
         x=X[neg_index, 0],
-        y=X[neg_index, 1], 
-        mode='markers', 
-        text=df.date.loc[neg_index], 
+        y=X[neg_index, 1],
+        mode='markers',
+        text=df.date.loc[neg_index],
         name='Понизить',
-        marker=dict(size=10, color=COLORS[-1]), 
+        marker=dict(size=10, color=COLORS[-1]),
         )
     fig.add_scatter(
         x=X[zero_index, 0],
         y=X[zero_index, 1],
-        mode='markers', 
-        text=df.date.loc[zero_index], 
+        mode='markers',
+        text=df.date.loc[zero_index],
         name='Сохранить',
-        marker=dict(size=10, color=COLORS[0]), 
+        marker=dict(size=10, color=COLORS[0]),
         )
     fig.update_layout(
-        showlegend=True, 
-        height=650, 
-        width=650, 
-        margin=dict(l=20,r=20,b=10,t=40),
+        showlegend=True,
+        height=650,
+        width=650,
+        margin=dict(l=20, r=20, b=10, t=40),
         title=title,
         title_font=dict(size=18, color='black', weight='bold'),
         title_x=0.5,

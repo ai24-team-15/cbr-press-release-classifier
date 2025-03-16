@@ -5,7 +5,7 @@ set -e
 
 # Define directories and file patterns to check
 PROJECT_DIR="$(pwd)"
-PYTHON_FILES=$(find "." -type f -name "*.py" ! -path "./.venv/*")
+PYTHON_FILES=$(find "." -type f -name "*.py" ! -path "./.venv/*" ! -path "./cbr_api/tests*")
 
 if [ -z "$PYTHON_FILES" ]; then
   echo "No Python files found in the project."
