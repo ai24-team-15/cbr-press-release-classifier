@@ -8,13 +8,13 @@ services:
     restart: unless-stopped
     environment:
       - LOGS_PATH=/app/logs
-      - MODELS_PATH=/app/models
+      - MODELS_PATH=/app/ml_models
       - DATA_PATH=/app/data
       - MYSTEM3_PATH=/app/data/mystem
     volumes:
       - ./logs:/app/logs
       - ./data:/app/data
-      - models_data:/app/models
+      - models_data:/app/ml_models
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://api:8000"]
     networks:
