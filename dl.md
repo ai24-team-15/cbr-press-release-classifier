@@ -5,6 +5,7 @@
 - [Sentence Transformer](ml/dl_models/sentence_transformer.ipynb)
 - [Sentence Transformer без ограничения длины текста](ml/dl_models/sentence_transformer_chunk.ipynb)
 - [Рекурентная нейронная сеть LSTM](ml/dl_models/lstm.ipynb)
+- [Классический многослойный перцептрон + аугментация](ml/dl_models/mlp_aug.ipynb)
 
 ### Сравнение метрик
 
