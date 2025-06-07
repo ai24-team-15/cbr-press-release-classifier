@@ -140,7 +140,7 @@ marp: true
 
 </div>
 <div class="item-img">
-    <img alt="img" src="svc_cm.png"/>
+    <img alt="img" src="img/svc_cm.png"/>
 </div>
 <div>
 Метод опорных векторов показал достаточно хорошее качество, едва удалось побить эти метрики с помощью нелинейных моделей.
@@ -180,7 +180,7 @@ marp: true
 
 </div>
 <div class="item-img">
-    <img alt="img" src="knn_cm.png"/>
+    <img alt="img" src="img/knn_cm.png"/>
 </div>
 <div>
 По метрикам ROC-AUC качество несколько уменьшилось относительно линейной модели, но по другим метрикам результат улучшился.
@@ -224,7 +224,7 @@ marp: true
 
 </div>
 <div class="item-img">
-    <img alt="img" src="timeseries_cm.png"/>
+    <img alt="img" src="img/timeseries_cm.png"/>
 </div>
 <div>
 Модель одинаково хорошо детектирует все виды классов, и не разу не перепутала повышение ставки с понижением.
@@ -264,7 +264,7 @@ marp: true
 
 </div>
 <div class="item-img">
-    <img alt="img" src="forest_cm.png"/>
+    <img alt="img" src="img/forest_cm.png"/>
 </div>
 <div>
 Случайный лес показал качество хуже более простых алгоритмов, возможно он требует больше данных для обучения.
@@ -303,7 +303,7 @@ marp: true
 
 </div>
 <div class="item-img">
-    <img alt="img" src="xgboost_cm.png"/>
+    <img alt="img" src="img/xgboost_cm.png"/>
 </div>
 <div>
 XGBoost показал accuracy лучше других бустингов, но хуже более простых алгоритмов.
@@ -342,7 +342,7 @@ XGBoost показал accuracy лучше других бустингов, но
 
 </div>
 <div class="item-img">
-    <img alt="img" src="catboost_cm.png"/>
+    <img alt="img" src="img/catboost_cm.png"/>
 </div>
 <div>
 Catboost показал качество хуже другх бустингов.
@@ -381,7 +381,7 @@ Catboost показал качество хуже другх бустингов.
 
 </div>
 <div class="item-img">
-    <img alt="img" src="lightgbm_cm.png"/>
+    <img alt="img" src="img/lightgbm_cm.png"/>
 </div>
 <div>
 LigthGBM показал качество ROC-AUC лучше, чем другие бустинги, но хуже более простых алгоритмов.
@@ -421,7 +421,7 @@ LigthGBM показал качество ROC-AUC лучше, чем другие
 
 </div>
 <div class="item-img">
-    <img alt="img" src="ensemble_cm.png"/>
+    <img alt="img" src="img/ensemble_cm.png"/>
 </div>
 <div>
 Ансамбль показывает самую высокую метрику ROC-AUC-OvO среди всех моделей классического ML, которые мы поробовали.
@@ -433,7 +433,7 @@ LigthGBM показал качество ROC-AUC лучше, чем другие
 # Метрики качества
 <div class="metrics-container">
 <div class="metrics-img">
-    <img alt="img" src="metrics.png"/>
+    <img alt="img" src="img/metrics.png"/>
 </div>
 <div class="metrics-text">
 Ансамбль превзошел по интегральным метрикам качества остальные модели, хотя его остальные метрики немного ниже чем у KNN.
