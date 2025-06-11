@@ -57,6 +57,7 @@ class ModelsResponse(BaseModel):
 class ModelType(str, Enum):
     log = "LogisticRegression"
     svc = "SVC"
+    knn = "KNN"
 
 
 class PredictRequest(BaseModel):

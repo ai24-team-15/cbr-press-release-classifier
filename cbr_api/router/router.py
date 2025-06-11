@@ -3,6 +3,7 @@ import asyncio
 from typing import Optional, Union
 from concurrent.futures.process import ProcessPoolExecutor
 import urllib.request
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
@@ -20,7 +21,14 @@ from models.models import (
     CalcResponse,
     StatusResponse,
 )
-from tools.utils import preprocessor, prepare_data, train_model, calc_metrics_utils, load_data_from_file
+from tools.utils import (
+    preprocessor,
+    preprocessor_knn,
+    prepare_data,
+    train_model,
+    calc_metrics_utils,
+    load_data_from_file,
+)
 from tools.settings import settings
 
 
@@ -61,10 +69,16 @@ async def fit(body: Model, request: Request) -> Optional[StatusResponse]:
         return StatusResponse(status=answer)
     clf = None
     if body.type == "LogisticRegression":
-        clf = LogisticRegression(**body.hyperparameters, random_state=settings.random_state)
+        clf = LogisticRegression(
+            **body.hyperparameters, random_state=settings.random_state
+        )
     elif body.type == "SVC":
         clf = SVC(**body.hyperparameters, random_state=settings.random_state)
-    transform = ColumnTransformer([("tf-idf", TfidfVectorizer(preprocessor=preprocessor), "release")])
+    elif body.type == "KNN":
+        clf = KNeighborsClassifier(**body.hyperparameters)
+    transform = ColumnTransformer(
+        [("tf-idf", TfidfVectorizer(preprocessor=preprocessor), "release")]
+    )
     pipeline = Pipeline([("transform", transform), ("classifier", clf)])
     X, y, _ = prepare_data(request.app.data)
     pipeline = await run_in_process(train_model, pipeline, X, y)
@@ -80,8 +94,14 @@ async def fit(body: Model, request: Request) -> Optional[StatusResponse]:
     return StatusResponse(status=answer)
 
 
-@router.get("/calc_metrics/{model_id}/{window}", response_model=None, responses={"200": {"model": CalcResponse}})
-async def calc_metrics(model_id: str, window: int, request: Request) -> Union[StatusResponse, CalcResponse]:
+@router.get(
+    "/calc_metrics/{model_id}/{window}",
+    response_model=None,
+    responses={"200": {"model": CalcResponse}},
+)
+async def calc_metrics(
+    model_id: str, window: int, request: Request
+) -> Union[StatusResponse, CalcResponse]:
     """
     Обучает на части данных и запоминает метрики
     """
@@ -94,12 +114,17 @@ async def calc_metrics(model_id: str, window: int, request: Request) -> Union[St
         logging.info(answer)
         return StatusResponse(status=answer)
     clf = None
+    X, y, _ = prepare_data(request.app.data)
     if request.app.ml_models[model_id]["type"] == "LogisticRegression":
         clf = LogisticRegression(**request.app.ml_models[model_id]["hyperparameters"])
+        vec = TfidfVectorizer(preprocessor=preprocessor)
     elif request.app.ml_models[model_id]["type"] == "SVC":
         clf = SVC(**request.app.ml_models[model_id]["hyperparameters"])
-    X, y, _ = prepare_data(request.app.data)
-    vec = TfidfVectorizer(preprocessor=preprocessor)
+        vec = TfidfVectorizer(preprocessor=preprocessor)
+    elif request.app.ml_models[model_id]["type"] == "KNN":
+        clf = KNeighborsClassifier(**request.app.ml_models[model_id]["hyperparameters"])
+        vec = TfidfVectorizer(preprocessor=preprocessor_knn)
+    
     X_tfidf = vec.fit_transform(X["release"])
     res = await run_in_process(calc_metrics_utils, clf, X_tfidf, y, window)
     return CalcResponse(y_preds=res[0], y_pred_probas=res[1], y_trues=res[2])
@@ -180,8 +205,12 @@ async def load_data(
     return StatusResponse(status="Данные успешно загружены")
 
 
-@router.post("/predict", response_model=None, responses={"200": {"model": PredictResponse}})
-async def predict(body: PredictRequest, request: Request) -> Union[PredictResponse, StatusResponse]:
+@router.post(
+    "/predict", response_model=None, responses={"200": {"model": PredictResponse}}
+)
+async def predict(
+    body: PredictRequest, request: Request
+) -> Union[PredictResponse, StatusResponse]:
     """
     Делает прогноз с помощью указанной модели
     """
@@ -193,7 +222,9 @@ async def predict(body: PredictRequest, request: Request) -> Union[PredictRespon
     if body.release is not None:
         last_release.release = body.release
     pred = request.app.ml_models[body.model_id]["pipeline"].predict(last_release)[0]
-    pred_proba = request.app.ml_models[body.model_id]["pipeline"].predict_proba(last_release)[0]
+    pred_proba = request.app.ml_models[body.model_id]["pipeline"].predict_proba(
+        last_release
+    )[0]
     return PredictResponse(predict=pred, predict_proba=pred_proba)
 
 
@@ -207,7 +238,9 @@ async def sync_data(request: Request) -> StatusResponse:
             "https://storage.yandexcloud.net/cbr-press-release-classifier/cbr-press-releases.csv",
             f"{settings.data_path}/data_s3.csv",
         )
-        request.app.data = load_data_from_file(filename=f"{settings.data_path}/data_s3.csv")
+        request.app.data = load_data_from_file(
+            filename=f"{settings.data_path}/data_s3.csv"
+        )
         answer = f"Данные с S3 успешно загружены ({len(request.app.data)})"
     except urllib.error.HTTPError as e:
         answer = f"Ошибка загрузки данных с S3 ({e})"

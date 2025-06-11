@@ -11,18 +11,19 @@ st.header("Обучение модели")
 payload = {}
 
 # Выбор типа модели
-payload["type"] = st.radio("Выберите модель", ["LogisticRegression", "SVC"])
+payload["type"] = st.radio("Выберите модель", ["LogisticRegression", "SVC", "KNN"])
 
 st.subheader("Выберите гиперпараметры модели")
 
 # Словарь для хранения значений гиперпараметров
 params = {}
 
-# Выбор значения гиперпараметра C с помощью слайдера
-params["C"] = st.slider("C", 0.0, 10.0, step=0.001, value=1.0, format="%.3f")
+if payload["type"] == "LogisticRegression" or payload["type"] == "SVC":
+    # Выбор значения гиперпараметра C с помощью слайдера
+    params["C"] = st.slider("C", 0.0, 10.0, step=0.001, value=1.0, format="%.3f")
 
-# Выбор значения гиперпараметра tol с помощью слайдера
-params["tol"] = st.slider("tol", 1e-6, 1e-3, step=0.000001, format="%.6f", value=1e-4)
+    # Выбор значения гиперпараметра tol с помощью слайдера
+    params["tol"] = st.slider("tol", 1e-6, 1e-3, step=0.000001, format="%.6f", value=1e-4)
 
 # Условия для настройки гиперпараметров для LogisticRegression
 if payload["type"] == "LogisticRegression":
@@ -76,7 +77,7 @@ if payload["type"] == "LogisticRegression":
     # Если используется penalty 'elasticnet', добавляется гиперпараметр l1_ratio
     if params["penalty"] == "elasticnet":
         params["l1_ratio"] = st.slider("l1_ratio", 0.0, 1.0, step=0.01, value=0.5)
-else:
+elif payload["type"] == "SVC":
     # Условия для настройки гиперпараметров для SVC
     # Выбор типа ядра (kernel)
     params["kernel"] = st.radio("kernel", ["rbf", "linear", "poly", "sigmoid"])
@@ -98,7 +99,12 @@ else:
 
     # Включаем вероятность для всех типов ядра
     params["probability"] = True
-
+elif payload["type"] == "KNN":
+    params["n_neighbors"] = st.slider("n_neighbors", 1, 25, step=1, value=5)
+    params["weights"] = st.radio("weights", ["uniform", "distance"])
+    params["algorithm"] = st.radio("algorithm", ["auto", "ball_tree", "kd_tree", "brute"])
+    params["leaf_size"] = st.slider("leaf_size", 1, 50, step=1, value=30)
+    params["p"] = st.slider("p", 1, 2, step=1, value=2)
 # Добавление выбранных гиперпараметров в payload
 payload["hyperparameters"] = params
 

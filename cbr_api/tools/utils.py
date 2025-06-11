@@ -110,6 +110,24 @@ def preprocessor(text):
     text = " ".join([word for word in text.split() if word not in stop_words])
     return text
 
+def preprocessor_knn(text):
+
+    # приводим к нижнему регистру
+    text = text.lower()
+    mystem = Mystem()
+
+    # удаляем все символы, кроме пробелов и русских букв.
+    regex = re.compile("[^а-я А-ЯЁё]")
+    text = regex.sub(" ", text)
+
+    # лемматизируем тексты
+    text = " ".join(mystem.lemmatize(text))
+    stop_words = set(stopwords.words("russian"))
+
+    # удаляем стоп-слова
+    text = " ".join([word for word in text.split() if word not in stop_words])
+    return text
+
 
 def prepare_data(data_dict):
     """
