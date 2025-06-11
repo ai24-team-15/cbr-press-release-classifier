@@ -11,7 +11,7 @@ st.header("Обучение модели")
 payload = {}
 
 # Выбор типа модели
-payload["type"] = st.radio("Выберите модель", ["LogisticRegression", "SVC", "KNN"])
+payload["type"] = st.radio("Выберите модель", ["LogisticRegression", "SVC", "KNN", "RandomForest"])
 
 st.subheader("Выберите гиперпараметры модели")
 
@@ -105,6 +105,10 @@ elif payload["type"] == "KNN":
     params["algorithm"] = st.radio("algorithm", ["auto", "ball_tree", "kd_tree", "brute"])
     params["leaf_size"] = st.slider("leaf_size", 1, 50, step=1, value=30)
     params["p"] = st.slider("p", 1, 2, step=1, value=2)
+elif payload["type"] == "RandomForest":
+    params["max_depth"] = st.slider("max_depth", 1, 20, step=1, value=5)
+    params["min_samples_split"] = st.slider("min_samples_split", 2, 10, step=1, value=2)
+    params["min_samples_leaf"] = st.slider("min_samples_leaf", 1, 10, step=1, value=1)
 # Добавление выбранных гиперпараметров в payload
 payload["hyperparameters"] = params
 

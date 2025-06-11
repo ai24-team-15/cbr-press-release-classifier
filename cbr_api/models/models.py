@@ -58,6 +58,8 @@ class ModelType(str, Enum):
     log = "LogisticRegression"
     svc = "SVC"
     knn = "KNN"
+    rf = "RandomForest"
+
 
 
 class PredictRequest(BaseModel):

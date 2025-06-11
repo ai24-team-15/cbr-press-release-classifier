@@ -4,6 +4,8 @@ from typing import Optional, Union
 from concurrent.futures.process import ProcessPoolExecutor
 import urllib.request
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
@@ -72,14 +74,30 @@ async def fit(body: Model, request: Request) -> Optional[StatusResponse]:
         clf = LogisticRegression(
             **body.hyperparameters, random_state=settings.random_state
         )
+        transform = ColumnTransformer(
+            [("tf-idf", TfidfVectorizer(preprocessor=preprocessor), "release")]
+        )
+        pipeline = Pipeline([("transform", transform), ("classifier", clf)])
     elif body.type == "SVC":
         clf = SVC(**body.hyperparameters, random_state=settings.random_state)
+        transform = ColumnTransformer(
+            [("tf-idf", TfidfVectorizer(preprocessor=preprocessor), "release")]
+        )
+        pipeline = Pipeline([("transform", transform), ("classifier", clf)])
     elif body.type == "KNN":
         clf = KNeighborsClassifier(**body.hyperparameters)
-    transform = ColumnTransformer(
-        [("tf-idf", TfidfVectorizer(preprocessor=preprocessor), "release")]
-    )
-    pipeline = Pipeline([("transform", transform), ("classifier", clf)])
+        transform = ColumnTransformer(
+            [("tf-idf", TfidfVectorizer(preprocessor=preprocessor_knn), "release")]
+        )
+        pipeline = Pipeline([("transform", transform), ("classifier", clf)])
+    elif body.type == "RandomForest":
+        clf = RandomForestClassifier(**body.hyperparameters)
+        transform = ColumnTransformer(
+            [("tf-idf", TfidfVectorizer(preprocessor=preprocessor_knn), "release")]
+        )
+        pca = PCA(n_components=23)
+        pipeline = Pipeline([("transform", transform), ("pca", pca), ("classifier", clf)])
+
     X, y, _ = prepare_data(request.app.data)
     pipeline = await run_in_process(train_model, pipeline, X, y)
     # pipeline.fit(X, y)
@@ -124,8 +142,15 @@ async def calc_metrics(
     elif request.app.ml_models[model_id]["type"] == "KNN":
         clf = KNeighborsClassifier(**request.app.ml_models[model_id]["hyperparameters"])
         vec = TfidfVectorizer(preprocessor=preprocessor_knn)
-    
+    elif request.app.ml_models[model_id]["type"] == "RandomForest":
+        clf = RandomForestClassifier(
+            **request.app.ml_models[model_id]["hyperparameters"]
+        )
+        vec = TfidfVectorizer(preprocessor=preprocessor_knn)
+        pca = PCA(n_components=23)
     X_tfidf = vec.fit_transform(X["release"])
+    if request.app.ml_models[model_id]["type"] == "RandomForest":
+        X_tfidf = pca.fit_transform(X_tfidf)
     res = await run_in_process(calc_metrics_utils, clf, X_tfidf, y, window)
     return CalcResponse(y_preds=res[0], y_pred_probas=res[1], y_trues=res[2])
 
