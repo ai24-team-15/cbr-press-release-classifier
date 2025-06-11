@@ -8,12 +8,12 @@ services:
     restart: unless-stopped
     environment:
       - LOGS_PATH=/app/logs
-      - MODELS_PATH=/app/ml_models
+      - MODELS_PATH=/app/cbr-api/ml_models
       - DATA_PATH=/app/data
     volumes:
       - ./logs:/app/logs
       - ./data:/app/data
-      - models_data:/app/ml_models
+      - models_data:/app/cbr-api/ml_models
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://api:8000"]
     networks:
