@@ -4,7 +4,11 @@ marp: true
 
 <style scoped>
     section {
-      padding-top: 5px;
+      padding-top: 0px;
+      
+    }
+    h4 {
+      font-size: 24px;
     }
     tr, td {
         background: none !important;
@@ -110,7 +114,7 @@ marp: true
 ---
 <style scoped>
   section {
-    padding-top: 40px;
+    padding-top: 25px;
   }
   h1 {
     text-align: center;
@@ -128,21 +132,21 @@ marp: true
     border-left: 6px solid #4285f4;
     padding: 0.5rem;
     margin: 0 0;
-    font-size: 24px;
+    font-size: 28px;
   }
   .core-box {
     background-color: #f5f5f5;
     border-left: 6px solid #aa0000;
     padding: 0.5rem;
     margin: 0 0;
-    font-size: 24px;
+    font-size: 28px;
   }
   .solution-box {
     background-color: #f5f5f5;
     border-left: 6px solid #00aa00;
     padding: 0.5rem;
     margin: 0 0;
-    font-size: 24px;
+    font-size: 28px;
   }
 </style>
 
@@ -170,17 +174,21 @@ marp: true
 
 <style scoped>
   section {
-    padding-top: 0px;
+    padding-top: 25px;
+    font-size: 28px;
   }
   h1 {
     padding-top: 0px;
     margin-top: 0px;
     text-align: center
   }
+  .description-box {
+    padding-bottom: 100px;
+  }
 </style>
 
 <h1>Описание данных</h1>
-
+<div class='description-box'>
 <h4>Собранный датасет имеет следующие признаки:</h4>
 
 - `date` - дата опубликования пресс-релиза;
@@ -190,40 +198,188 @@ marp: true
 - `rate` - ключевая ставка утвержденная во время следующего заседания;
 - `inflation` - значение инфляции в месяц следующего заседания (годовая);
 - `usd` - курс доллара на день следующего заседания;
+</div>
 
 ---
 <style scoped>
   section {
-    padding-top: 0px;
+    padding-top: 25px;
+    justify-content: flex-start;
+
   }
   h1 {
     padding-top: 0px;
     margin-top: 0px;
     text-align: center
   }
+  .data-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0rem;
+  }
+  .dataset-box {
+    background-color: #f5f5f5;
+    border-left: 6px solid #aa0000;
+    padding: 0.5rem;
+    margin: 0 0;
+    font-size: 24px;
+  }
+  .corr-box {
+    background-color: #f5f5f5;
+    border-left: 6px solid #00aa00;
+    padding: 0.5rem;
+    margin: 0 0;
+    font-size: 24px;
+  }
+  .balance-box {
+    background-color: #f5f5f5;
+    border-left: 6px solid #e5e433;
+    padding: 0.5rem;
+    margin: 0 0;
+    font-size: 24px;
+  }
 </style>
 
 <h1>Особенности данных</h1>
-
-- Датасет менее 100 наблюдений. Имеет место проблема переобучения.
-- Наблюдается корреляция между ключевой ставкой, инфляцией и курсом доллара.
-- Наблюдается дисбаланс по классам:
-    - 43,2% наблюдений - о сохранении текущего уровня ставки,
-    - 31,6% - о понижении
-    - 25,3% - о повышении.
-яапритапфыяапрыриыапиыя
-фвафвафвафва
-фвафвафвафвафвафва
+<h4>Мало данных:</h4>
+<div class='dataset-box'>
+  Датасет менее 100 наблюдений. Имеет место проблема переобучения.
+</div>
+<h4>Корреляция:</h4>
+<div class='corr-box'>
+  Наблюдается корреляция между ключевой ставкой, инфляцией и курсом доллара.
+</div>
+<h4>Дисбаланс классов:</h4>
+<div class='balance-box'>
+Наблюдается небольшой дисбаланс по классам:
+<ul>
+    <li> 43,2% наблюдений - сохранение ставки</li>
+    <li>31,6% - понижение ставки</li>
+    <li>25,3% - повышение ставки</li>
+</ul>
+</div>
 
 ---
 
-# EDA
+<h1>Исследовательский анализ</h1>
 
-За длинными пресс-релизами(по количесву символов) как правило следует повышение ключевой ставки.
+---
+
+<style scoped>
+  section {
+    padding-top: 25px;
+    justify-content: flex-start;
+
+  }
+  h1 {
+    padding-top: 0px;
+    margin-top: 0px;
+    text-align: center
+  }
+  p {
+    font-size: 24px;
+  }
+
+  .description-box {
+    background-color: #f5f5f5;
+    border-left: 6px solid #aa0000;
+    padding: 0.5rem;
+    margin: 0 0;
+    font-size: 24px;
+  }
+</style>
+
+<h1>Динамика ключевой ставки</h1>
+
+<p>
+  💡 Ставку повышают при высокой инфляции<br>
+  💡 Мы видим три цикла роста ставки, сейчас мы находимся на пике третьего цикла<br>
+  💡 С долларом корреляция значительно слабее, в период с 2018 года по 2021 ставка снижается, а доллар растет
+</p>
+  <img src='./img/dinamic_rate.png'/>
+
+---
+
+<style scoped>
+  section {
+    padding-top: 25px;
+    justify-content: flex-start;
+
+  }
+  h1 {
+    padding-top: 0px;
+    margin-top: 0px;
+    text-align: center
+  }
+  p {
+    font-size: 24px;
+  }
+  .description-box {
+    background-color: #f5f5f5;
+    border-left: 6px solid #aa0000;
+    padding: 0.5rem;
+    margin: 0 0;
+    font-size: 24px;
+  }
+</style>
+
+<h1>Длина пресс-релизов</h1>
+
+<p>💡 За длинными пресс-релизами как правило следует повышение ключевой ставки. Возможно, руководство банка пытается оправдать свое решение.
+</p>
 
 ![](img/length.png)
 
 ---
+
+<style scoped>
+    section {
+    padding-top: 25px;
+    justify-content: flex-start;
+
+  }
+  h1 {
+    padding-top: 0px;
+    margin-top: 0px;
+    text-align: center
+  }
+  .two-columns {
+      display: flex;
+      justify-content: space-between;
+      /* align-items: center; */
+      /* gap: 2rem; */
+      /* margin-top: 1rem; */
+  }
+  .image-column {
+      width: 65%;
+
+  }
+  .text-column {
+      flex: 1;
+      text-align: center;
+      width: 45%;
+      align-items: center;
+      margin-top: 150px;
+  }
+  img {
+      width: 95%;
+      height: 575px;
+  }
+</style>
+
+<h1>Визуализация на плоскости</h1>
+
+<div class="two-columns">
+    <div class="image-column">
+        <img src="img/tsne.png" />
+    </div>
+    <div class="text-column">
+      💡 T-SNE визуализация разбила тексты пресс-релизов на 2 кластера. Возможно в 2018 году сменился редактор и тексты сильно поменялись.
+    </div>
+</div>
+
+---
+
 
 <style scoped>
     section {
@@ -236,33 +392,12 @@ marp: true
     }
 </style>
 
-# EDA
+
 
 Облака слов показывают различие частотности слов в различных классах.
 
 <center>
     <img src="img/words.png" />
-</center>
-
----
-
-<style scoped>
-    section {
-        padding: 1rem !important;
-    }
-    
-    img {
-        width: 45%;
-        height: auto;
-    }
-</style>
-
-# EDA
-
-t-SNE: пресс-релизы можно разделить на две группы до весны 2018 и после.
-
-<center>
-    <img src="img/tsne.png" />
 </center>
 
 ---
