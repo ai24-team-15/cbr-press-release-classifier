@@ -440,8 +440,8 @@ marp: true
 
 <style scoped>
     section {
-        padding-top: 25px !important;
-        margin: 0 !important;
+        /* padding-top: 25px !important;
+        margin: 0 !important; */
     }
     h1 {
         padding-top: 0px !important;
@@ -479,7 +479,7 @@ marp: true
         color: #2c3e50;
         border-bottom: 2px solid #3498db;
         padding-bottom: 10px;
-        font-size: 24px;
+        font-size: 28px;
         margin-bottom: 15px;
     }
     .approach-list {
@@ -534,120 +534,50 @@ marp: true
 ---
 
 <style scoped>
+<style scoped>
     section {
-        padding: 1rem !important;
-    }
-    
-    table {
-        display: table;
-        width: 100%;
-    }
-    
-    table * {
-        font-size: 10pt;
-    }
-    
-    .yellow {
-        background-color: yellow;
-    }
+    padding-top: 25px !important;
+    /* justify-content: flex-start; */
+
+  }
+  h1 {
+    padding-top: 0px;
+    margin-top: 0px;
+    text-align: center
+  }
+  div {
+    height: 1000px
+  }
 </style>
 
-# Метрики качества моделей
+<div>
+<h1>Результаты классического ML</h1>
+to do
 
-<table border="1" class="dataframe">
-  <thead>
-    <tr>
-      <th>Модель</th>
-      <th>Гиперпараметры</th>
-      <th>ROC AUC OvO</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Минимальный бейзлайн</th>
-      <td>-</td>
-      <td>0.749583</td>
-    </tr>
-    <tr>
-      <th>BoW (тексты релизов) + LogReg с L1-регуляризацией</th>
-      <td>C=7.241655172413794, penalty='l1', solver='liblinear'</td>
-      <td>0.770722</td>
-    </tr>
-    <tr>
-      <th>BoW + LogReg с L1-, L2-регуляризацией</th>
-      <td rowspan="3">C=10, l1_ratio=0.1, max_iter=10000, penalty='elasticnet', solver='saga'</td>
-      <td>0.873204</td>
-    </tr>
-    <tr>
-      <th>BoW (тексты релизов + заголовки) + LogReg</th>
-      <td>0.871488</td>
-    </tr>
-    <tr>
-      <th>BoW (тексты релизов + числовые переменные) + LogReg</th>
-      <td>0.863797</td>
-    </tr>
-    <tr>
-      <th>BoW (тексты релизов) + SVM</th>
-      <td>C=7, kernel='linear', probability=True</td>
-      <td>0.837417</td>
-    </tr>
-    <tr>
-      <th>TF-IDF (тексты релизов) + LogReg с L1-регуляризацией</th>
-      <td>C=10.0, penalty='l1', solver='liblinear'</td>
-      <td>0.787614</td>
-    </tr>
-    <tr>
-      <th>TF-IDF (тексты релизов c доп. фильтрацией) + LogReg</th>
-      <td rowspan="3">C=10, l1_ratio=0.1, max_iter=10000, penalty='elasticnet', solver='saga'</td>
-      <td>0.903270</td>
-    </tr>
-    <tr>
-      <th>TF-IDF (тексты релизов + заголовки) + LogReg</th>
-      <td>0.881341</td>
-    </tr>
-    <tr>
-      <th>TF-IDF (тексты релизов + числовые переменные) + LogReg</th>
-      <td>0.837195</td>
-    </tr>
-    <tr class="yellow">
-      <th>TF-IDF (тексты релизов) + SVM</th>
-      <td>C=10, kernel='linear', probability=True</td>
-      <td>0.927695</td>
-    </tr>
-    <tr>
-      <th>N-граммы плюс Naive Bayes</th>
-      <td>ngram_range(3, 6)</td>
-      <td>0.777142</td>
-    </tr>
-    <tr>
-      <th>Word2Vec + LogReg</th>
-      <td>C=1, l1_ratio=0.9, max_iter=10000, penalty='elasticnet', solver='saga'</td>
-      <td>0.732520</td>
-    </tr>
-    <tr>
-      <th>Word2Vec (предобученная модель) + LogReg</th>
-      <td>C=0.1, l1_ratio=0.1, max_iter=10000, penalty='elasticnet', solver='saga'</td>
-      <td>0.765176</td>
-    </tr>
-    <tr>
-      <th>Word2Vec (предобученная модель с фильтрацией) + LogReg</th>
-      <td>C=10, l1_ratio=0.5, max_iter=10000, penalty='elasticnet', solver='saga'</td>
-      <td>0.697273</td>
-    </tr>
-    <tr>
-      <th>Word2Vec (предобученная модель) + SVM</th>
-      <td>C=7, kernel='linear', probability=True</td>
-      <td>0.749317</td>
-    </tr>
-    <tr>
-      <th>GloVe + SVM</th>
-      <td>C=3, probability=True</td>
-      <td>0.768338</td>
-    </tr>
-  </tbody>
-</table>
+</div>
 
 ---
+
+<h1>Deep Learning</h1>
+
+---
+
+<h1>Используемые подходы</h1>
+to do
+
+---
+
+<h1>Результаты DL</h1>
+to do
+
+---
+
+<h1>Сервис</h1>
+
+---
+
+
+<!-- ---
 
 # Сервис FastAPI
 
@@ -659,9 +589,9 @@ marp: true
 
 **Инференс моделей:** Реализован как обычный прогноз, так и вычисление метрик при обучении на части данных.
 
-**Управление моделями:** Как и данные, модели сохраняются во время остановки сервиса и загружаются при запуске.
+**Управление моделями:** Как и данные, модели сохраняются во время остановки сервиса и загружаются при запуске. -->
 
----
+<!-- ---
 
 # Приложение Streamlit
 
@@ -671,31 +601,18 @@ marp: true
 
 **Исследовательский анализ:** Баланс классов, динамика ставки, курса доллара США и годовой инфляции, длина текстов, облака слов, t-SNE визуализация.
 
-**Машинное обучение:** Обучение моделей с выбором гиперпараметров, сравнение моделей между собой и предсказание с помощью выбранной модели.
+**Машинное обучение:** Обучение моделей с выбором гиперпараметров, сравнение моделей между собой и предсказание с помощью выбранной модели. -->
 
----
-
-# Инфраструктура
-
-- Docker-образы сервиса и веб-приложения.
-- Конфигурация Docker Compose для запуска приложения.
-- Система сбора логов ELK.
-- Деплой в Yandex Cloud с использованием сервисов:
-    - Object Storage
-    - Container Registry
-    - Compute Cloud
-    
-Приложение доступно по адресу http://cbr-classifier.ddns.net/
-
----
 
 <style scoped>
     section {
-        padding: 1rem !important;
+        padding-top: 25px;
     }
-    
+    h1 {
+      text-align: center;
+    }
     img {
-        width: 80%;
+        width: 75%;
         height: auto;
     }
     
@@ -704,19 +621,106 @@ marp: true
     }
 </style>
 
-#### Демонстрация работы сервиса
+<h1>Демонстрация работы сервиса</h1>
 
-![screencast](img/app_screencast.gif)
+![screencast](img-final/app_screencast.gif)
 
 ---
 
 <style scoped>
     section {
-        padding: 1rem !important;
+        padding-top: 25px !important;
+        margin: 0 !important;
+    }
+    h1 {
+        padding-top: 0px !important;
+        margin: 0 0 20px 0 !important; 
+        text-align: center;
+        width: 100%;
+    }
+    .approach-slide {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        padding-top: 0px;
+        background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+    }
+    .approach-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 30px;
+        margin-top: 0px; 
+        height: calc(100% - 40px);
+        padding: 0 20px; 
+    }
+    .approach-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+        min-height: 300px;
+    }
+    .approach-card:hover {
+        transform: translateY(-5px);
+    }
+    .approach-title {
+        color: #2c3e50;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 10px;
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+    .approach-list {
+        list-style-type: none;
+        padding-left: 0;
+        font-size: 24px;
+    }
+    .approach-list li {
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%233498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle></svg>') no-repeat left center;
+        padding-left: 30px; 
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+</style>
+
+<h1>Инфраструктура</h1>
+
+<div class="approach-slide">
+    <div class="approach-container">
+        <div class="approach-card">
+            <h3 class="approach-title">Инструменты</h3>
+            <ul class="approach-list">
+                <li>Docker образы сервиса и веб-приложения</li>
+                <li>Конфигурация Docker Compose для запуска приложения</li>
+                <li>Система сбора логов ELK</li>
+            </ul>
+        </div>
+
+  <div class="approach-card">
+            <h3 class="approach-title">Сервисы Yandex Cloud</h3>
+            <ul class="approach-list">
+                <li>Object Storage</li>
+                <li>Container Registry</li>
+                <li>Compute Cloud</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+---
+
+<style scoped>
+    section {
+        padding: 25px !important;
+    }
+
+    h1 {
+      text-align: center;
     }
     
     img {
-        width: 80%;
+        width: 73%;
         height: auto;
     }
     
@@ -725,9 +729,9 @@ marp: true
     }
 </style>
 
-#### Демонстрация системы сбора логов
+<h1>Демонстрация системы сбора логов</h1>
 
-![screencast](img/logs_screencast.gif)
+![screencast](img-final/logs_screencast.gif)
 
 ---
 
