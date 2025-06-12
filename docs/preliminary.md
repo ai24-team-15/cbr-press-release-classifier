@@ -1,12 +1,22 @@
 ---
 marp: true
 ---
-
-<!-- theme: default -->
-<!-- paginate: true -->
-<!-- lang: ru -->
+<style>
+  section {
+    padding-top: 5px !important;
+  }
+  h1 {
+    margin-top: 5px !important;
+    position: relative !important;
+    top: 0 !important;
+    text-align: center;
+  }
+</style>
 
 <style scoped>
+    section {
+      padding-top: 5px;
+    }
     tr, td {
         background: none !important;
         border: none !important;
@@ -33,11 +43,18 @@ marp: true
       gap: 3rem;
     }
     .left-column {
-      width: 50%;
+      width: 28%;
       text-align: left;
     }
+    .center-column {
+      width: 28%;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
     .right-column {
-      width: 50%;
+      width: 29%;
       text-align: left;
     }
 
@@ -51,8 +68,8 @@ marp: true
       text-align: center;
       margin-bottom: 2rem;
     }
-    .hero tr {
-      text-align: center
+    .hero td {
+      font-size: 20pt;
     }
     </style>
 
@@ -67,20 +84,28 @@ marp: true
 <div class="hero">
 
 <div class="left-column">
+  <table>
+    <tr><h4>Куратор проекта:</h4></tr>
+      <tr><td>Ковалева Александра</td></tr>
+  </table>
+</div>
 
-  <h4>Куратор проекта:</h4>  
-    Ковалева Александра
+<div class="center-column">
+  <img src="./img/title.jpg" class="center-image" alt="Логотип проекта">
 </div>
 
 <div class="right-column">
   <table>
     <tr><h4>Участники проекта:</h4></tr>
     <tr>
-      <td>Жарковский Дмитрий</td>  
+      <td>Жарковский Дмитрий</td> 
+    </tr>
+    <tr> 
       <td>Кузьмин Дмитрий</td>
     </tr>
     <tr>
       <td>Куимов Владислав</td> 
+    </tr>
       <td>Хадиев Руслан</td>
     </tr>
   </table>
@@ -94,16 +119,64 @@ marp: true
 </div>
 
 ---
+<style scoped>
+  h4 {
+    font-size: 28px;
+  }
+  .task-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0rem;
+  }
+  .context-box {
+    background-color: #f5f5f5;
+    border-left: 6px solid #4285f4;
+    padding: 0.5rem;
+    margin: 0 0;
+    font-size: 24px;
+  }
+  .core-box {
+    background-color: #f5f5f5;
+    border-left: 6px solid #aa0000;
+    padding: 0.5rem;
+    margin: 0 0;
+    font-size: 24px;
+  }
+  .solution-box {
+    background-color: #f5f5f5;
+    border-left: 6px solid #00aa00;
+    padding: 0.5rem;
+    margin: 0 0;
+    font-size: 24px;
+  }
+</style>
 
-# Постановка задачи
+<h1>Постановка задачи</h1>
 
-ЦБ каждый раз после заседания по ключевой ставке на сайте публикует пресс-релизы, в которых рассказывается про состояние экономики, инфляцию, спрос на продукты, услуги и т.д. и объясняет причину изменения/не изменения ставки.
+<div class="task-container">
 
-Задача состоит в том, чтобы по семантике текста понять, что будет происходить с ключевой ставкой после на следующем заседании: ЦБ ее поднимет, опустит или оставит неизменной. Необходимо создать классификатор, который сможет определить тексты на 3 класса: -1 (ставка опустится), 0 (останется неизменной), 1 (ставку повысят).
+  <h4>Контекст задачи:</h4>
+  <div class="context-box">
+    После каждого заседания совета директоров по ключевой ставке Центральный Банк публикует пресс-релизы
+  </div>
+
+  <h4>Суть проблемы:</h4>
+  <div class='core-box'>
+    Текст пресс-релиза содержит косвенные сигналы о будущих решениях ЦБ, которые необходимо выявить, формализовать и автоматизировать
+  </div>
+
+  <h4>Решение:</h4>
+  <div class='solution-box'>
+    Создать классификатор текстов, прогнозирующий решение о ключевой ставке на основе семантического анализа
+  </div>
+</div>
 
 ---
+<style scoped>
 
-# Цели по проекту на год
+</style>
+
+<h1 class='title'>Цели по проекту на год</h1>
 
 - ✅ Парсинг пресс-релизов с сайта ЦБ.
 - ✅ Парсинг дополнительных данных: уровень инфляции и курс доллара США.
