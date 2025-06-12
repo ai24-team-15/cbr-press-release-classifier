@@ -1,3 +1,7 @@
+---
+marp: true
+---
+
 <!-- theme: default -->
 <!-- paginate: true -->
 <!-- lang: ru -->
@@ -21,35 +25,73 @@
         margin-top: 2rem;
         font-size: 0.75rem;
     }
-</style>
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 3rem;
+    }
+    .left-column {
+      width: 50%;
+      text-align: left;
+    }
+    .right-column {
+      width: 50%;
+      text-align: left;
+    }
+
+    .github-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+    .center-title {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .hero tr {
+      text-align: center
+    }
+    </style>
+
+<div class="center-title">
 
 # Команда 15
 
 ## Классификатор пресс-релизов ЦБ с предсказанием будущей ключевой ставки
 
-**Куратор проекта**: Ковалева Александра
+</div>
 
-**Участники проекта**:
+<div class="hero">
 
-<table>
+<div class="left-column">
+
+  <h4>Куратор проекта:</h4>  
+    Ковалева Александра
+</div>
+
+<div class="right-column">
+  <table>
+    <tr><h4>Участники проекта:</h4></tr>
     <tr>
-        <td>Жарковский Дмитрий</td>
-        <td>Кузьмин Дмитрий</td>
+      <td>Жарковский Дмитрий</td>  
+      <td>Кузьмин Дмитрий</td>
     </tr>
     <tr>
-        <td>Иванов Иван</td>
-        <td>Хадиев Руслан</td>
+      <td>Куимов Владислав</td> 
+      <td>Хадиев Руслан</td>
     </tr>
-    <tr>
-        <td>Куимов Владислав</td>
-        <td></td>
-    </tr>
-</table>
+  </table>
+</div>
 
-<p class="icon">
-    <img src="https://github.githubassets.com/favicons/favicon.svg"/>
-    <a href="https://github.com/ai24-team-15">https://github.com/ai24-team-15</a>
-</p>
+</div>
+
+<div class="github-link">
+  <img src="https://github.githubassets.com/favicons/favicon.svg" width="24"/>
+  <a href="https://github.com/ai24-team-15">https://github.com/ai24-team-15</a>
+</div>
 
 ---
 
