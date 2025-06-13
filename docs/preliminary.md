@@ -774,110 +774,16 @@ marp: true
 ---
 
 <style scoped>
-    section {
-        padding-top: 25px !important;
-        margin: 0 !important;
-    }
-    h1 {
-        padding-top: 0px !important;
-        margin: 0 0 20px 0 !important; 
+    .center {
         text-align: center;
-        width: 100%;
-    }
-    .approach-slide {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        padding-top: 0px;
-        background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
-    }
-    .approach-container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr); 
-        gap: 30px;
-        margin-top: 0px; 
-        height: calc(100% - 40px);
-        padding: 0 20px; 
-    }
-    .approach-card {
-        background: white;
-        border-radius: 10px;
-        padding: 25px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease;
-        min-height: 300px;
-    }
-    .approach-card:hover {
-        transform: translateY(-5px);
-    }
-    .approach-title {
-        color: #2c3e50;
-        border-bottom: 2px solid #3498db;
-        padding-bottom: 10px;
-        font-size: 28px;
-        margin-bottom: 20px;
-    }
-    .approach-list {
-        list-style-type: none;
-        padding-left: 0;
-        font-size: 24px;
-    }
-    .approach-list li {
-        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%233498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle></svg>') no-repeat left center;
-        padding-left: 30px; 
-        margin-bottom: 15px;
-        line-height: 1.6;
     }
 </style>
 
 <h1>Инфраструктура</h1>
 
-<div class="approach-slide">
-    <div class="approach-container">
-        <div class="approach-card">
-            <h3 class="approach-title">Инструменты</h3>
-            <ul class="approach-list">
-                <li>Docker образы сервиса и веб-приложения</li>
-                <li>Конфигурация Docker Compose для запуска приложения</li>
-                <li>Система сбора логов ELK</li>
-            </ul>
-        </div>
-
-  <div class="approach-card">
-            <h3 class="approach-title">Сервисы Yandex Cloud</h3>
-            <ul class="approach-list">
-                <li>Object Storage</li>
-                <li>Container Registry</li>
-                <li>Compute Cloud</li>
-            </ul>
-        </div>
-    </div>
+<div class="center">
+<img src="img/infrastructure.png" width="65%"/>
 </div>
-
----
-
-<style scoped>
-    section {
-        padding: 25px !important;
-    }
-
-    h1 {
-      text-align: center;
-    }
-    
-    img {
-        width: 73%;
-        height: auto;
-    }
-    
-    p:has(> img) {
-        text-align: center;
-    }
-</style>
-
-<h1>Демонстрация системы сбора логов</h1>
-
-![screencast](img-final/logs_screencast.gif)
 
 ---
 
