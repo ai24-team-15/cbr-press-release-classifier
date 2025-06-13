@@ -455,7 +455,7 @@ marp: true
         display: flex;
         flex-direction: column;
         height: 100vh;
-        padding-top: 0px; /* Отступ для заголовка */
+        padding-top: 0px;
         background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
     }
     .approach-container {
@@ -534,10 +534,9 @@ marp: true
 ---
 
 <style scoped>
-<style scoped>
     section {
-    padding-top: 25px !important;
-    /* justify-content: flex-start; */
+    padding-top: 25px;
+    justify-content: flex-start;
 
   }
   h1 {
@@ -545,15 +544,38 @@ marp: true
     margin-top: 0px;
     text-align: center
   }
-  div {
-    height: 1000px
+  .two-columns {
+      display: flex;
+      justify-content: space-between;
+  }
+  .image-column {
+      width: 65%;
+
+  }
+  .text-column {
+      flex: 1;
+      text-align: center;
+      width: 45%;
+      align-items: center;
+      margin-top: 150px;
+  }
+  img {
+      width: 95%;
+      height: 575px;
   }
 </style>
 
-<div>
-<h1>Результаты классического ML</h1>
-to do
+<h1>Результаты классических моделей</h1>
 
+<div class="two-columns">
+    <div class="image-column">
+        <img src="img/classic_metrics.png" />
+    </div>
+    <div class="text-column">
+      💡 По всем метрикам ансамбль впереди одиночных моделей.<br>
+      <br>
+      💡 Линейная модель отстает совсем немного
+    </div>
 </div>
 
 ---
