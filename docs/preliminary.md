@@ -922,7 +922,7 @@ section {
 
 <h1>Демонстрация работы сервиса</h1>
 
-![screencast](img-final/app_screencast.gif)
+![screencast](img-final/app_screencast_slower.gif)
 
 ---
 
