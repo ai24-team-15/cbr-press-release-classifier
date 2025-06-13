@@ -243,7 +243,7 @@ marp: true
 <h1>Особенности данных</h1>
 <h4>Мало данных:</h4>
 <div class='dataset-box'>
-  Датасет менее 100 наблюдений. Имеет место проблема переобучения.
+  Датасет около 100 наблюдений. Имеет место проблема переобучения.
 </div>
 <h4>Корреляция:</h4>
 <div class='corr-box'>
@@ -535,6 +535,110 @@ marp: true
 ---
 
 <style scoped>
+table, tr, td { 
+    padding: 0px;
+    margin:0px
+}
+
+
+h1 {
+    padding-top: 0px;
+    margin-top: 0px;
+    text-align: center
+}
+table {
+    display: table;
+    height: 100%;
+    width: 100%;
+    font-size: 20px;
+}
+section {
+    padding-top: 25px;
+    justify-content: flex-start;
+
+  }
+</style>
+
+<h1>Результаты линейных моделей</h1>
+<center>
+
+|model|accuracy|f1|precision|recall|roc_auc_ovr|roc_auc_ovo|
+|-----|--------|--|---------|------|-----------|-----------|
+|min_baseline|0.660000|0.663508|0.665185|0.662014|0.741088|0.746510|
+|bow l1 only release|0.619718|0.625363|0.638134|0.617586|0.769287|0.776198|
+|bow elasticnet|0.605634|0.614252|0.627717|0.605681|0.782629|0.789369|
+|bow release title|0.535211|0.540659|0.559180|0.530911|0.781719|0.787411|
+|bow release all num|0.605634|0.608153|0.622475|0.600042|0.781633|0.786863|
+|bow svc only release|0.661972|0.669910|0.690243|0.658939|0.777454|0.782790|
+|tf_idf l1 only release|0.633803|0.636658|0.643844|0.633459|0.787036|0.793533|
+|tf_idf only release best word|0.690141|0.687276|0.716378|0.677423|0.812873|0.818740|
+|tf_idf title release|0.704225|0.704690|0.727814|0.694967|0.814459|0.819993|
+|tf_idf numerical release|0.633803|0.636130|0.690598|0.619883|0.779646|0.783247|
+|**tf-idf svc only release**|**0.704225**|**0.703578**|**0.722616**|**0.696951**|**0.838408**|**0.842157**|
+|MultinomialNB|0.591549|0.588805|0.581790|0.611007|0.758716|0.769045|
+|word2vec|0.549296|0.551954|0.546667|0.563701|0.734578|0.741607|
+|word2vec_pretrained|0.591549|0.606333|0.623737|0.595447|0.752430|0.761109|
+|word2vec_pretrained svc|0.563380|0.573269|0.584057|0.565998|0.700435|0.709900|
+|glove svc only release|0.647887|0.654106|0.665218|0.647034|0.759503|0.766930|
+</center>
+
+---
+
+<style scoped>
+table, tr, td { 
+    padding: 0px;
+    margin:0px
+}
+
+
+h1 {
+    padding-top: 0px;
+    margin-top: 0px;
+    text-align: center
+}
+table {
+    display: table;
+    height: 100%;
+    width: 100%;
+    font-size: 20px;
+}
+section {
+    padding-top: 25px;
+    justify-content: flex-start;
+
+  }
+</style>
+
+<h1>Результаты нелинейных моделей</h1>
+
+<center>
+
+|model|accuracy|f1|precision|recall|roc_auc_ovr|roc_auc_ovo|
+|-----|--------|--|---------|------|-----------|-----------|
+|**K-neighbors tf_idf**|**0.704225**|**0.708239**|**0.708229**|**0.711692**|**0.819984**|**0.823556**|
+|K-neighbors tf_idf pca|0.676056|0.687194|0.684106|0.690773|0.801532|0.806358|
+|K-neighbors word2vec|0.647887|0.629487|0.628759|0.739583|0.773496|0.776707|
+|K-neighbors weighted word2vec|0.647887|0.629487|0.628759|0.739583|0.788023|0.789826|
+|lag target Random Forest|0.521127|0.526519|0.531642|0.544029|0.731007|0.738598|
+|lag target, rate Random Forest|0.605634|0.618363|0.605368|0.644444|0.731230|0.739525|
+|lag target, rate, usd Random Forest|0.577465|0.582126|0.569967|0.632840|0.752053|0.759921|
+|lag target, rate, usd, inflation Random Forest|0.661972|0.670210|0.660610|0.700436|0.748025|0.753910|
+|lag target, rate, usd, inflation, growth RF|0.676056|0.686532|0.674499|0.711310|0.759706|0.765801|
+|TimeSeries way Random Forest|0.605634|0.606619|0.595760|0.659621|0.770320|0.777869|
+|TimeSeries way KNN|0.704225|0.712155|0.707916|0.719756|0.801623|0.805869|
+|TimeSeries way CatBoost|0.661972|0.668035|0.666562|0.669849|0.774106|0.780636|
+|**ensemble**|**0.718310**|**0.722157**|**0.725773**|**0.719973**|**0.843613**|**0.848763**|
+|TF-IDF XGBoost|0.632353|0.633905|0.625271|0.653274|0.766337|0.771152|
+|TF-IDF CatBoost|0.514706|0.520886|0.506572|0.571789|0.701963|0.709235|
+|TF-IDF LigthGBM|0.588235|0.598482|0.584844|0.637146|0.789938|0.796427|
+
+</center>
+
+
+
+---
+
+<style scoped>
     section {
     padding-top: 25px;
     justify-content: flex-start;
@@ -566,7 +670,7 @@ marp: true
   }
 </style>
 
-<h1>Результаты классических моделей</h1>
+<h1>Лучшие результаты классических моделей</h1>
 
 <div class="two-columns">
     <div class="image-column">
@@ -674,6 +778,54 @@ marp: true
 ---
 
 <style scoped>
+table, tr, td { 
+    padding: 0px;
+    margin:0px
+}
+
+
+h1 {
+    padding-top: 0px;
+    margin-top: 0px;
+    text-align: center
+}
+table {
+    display: table;
+    height: 100%;
+    width: 100%;
+    font-size: 20px;
+}
+section {
+    padding-top: 25px;
+    justify-content: flex-start;
+
+  }
+</style>
+
+<h1>Результаты Deep Learning</h1>
+
+<center>
+
+|model|accuracy|f1|precision|recall|roc_auc_ovr|roc_auc_ovo|
+|-----|--------|--|---------|------|-----------|-----------|
+|MLP TF-IDF|0.633803|0.637242|0.639098|0.635712|0.734932|0.739688|
+|MLP TF-IDF + feature selection|0.619718|0.621444|0.619570|0.623723|0.712337|0.714390|
+|MLP TF-IDF aug|0.690141|0.695377|0.697995|0.693210|0.757692|0.763497|
+|CNN Word2Vec|0.507042|0.512979|0.503133|0.533333|0.680951|0.688055|
+|CNN Word2Vec pretrained|0.591549|0.601595|0.595447|0.610236|0.720667|0.727548|
+|CNN Glove pretrained|0.619718|0.627079|0.621241|0.635481|0.741688|0.746841|
+|CNN OHE|0.591549|0.597485|0.588137|0.618095|0.743447|0.749465|
+|CNN tf-idf|0.661972|0.669367|0.672201|0.666975|0.743708|0.749517|
+|LSTM|0.535211|0.547708|0.534566|0.573560|0.668927|0.678010|
+|MLP TF-IDF aug|0.690141|0.695377|0.697995|0.693210|0.757692|0.763497|
+|**Sentence transformer**|**0.661972**|**0.672887**|**0.668233**|**0.683114**|**0.815232**|**0.823791**|
+|Sentence transformer (chunk)|0.507042|0.495042|0.489557|0.560847|0.711372|0.717895|
+
+</center>
+
+---
+
+<style scoped>
     section {
     padding-top: 25px;
     justify-content: flex-start;
@@ -705,7 +857,7 @@ marp: true
   }
 </style>
 
-<h1>Результаты Deep Learning</h1>
+<h1>Лучшие результаты Deep Learning</h1>
 
 <div class="two-columns">
     <div class="image-column">
