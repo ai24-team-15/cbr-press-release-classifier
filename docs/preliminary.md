@@ -440,8 +440,8 @@ marp: true
 
 <style scoped>
     section {
-        /* padding-top: 25px !important;
-        margin: 0 !important; */
+        padding-top: 25px !important;
+        margin: 0 !important;
     }
     h1 {
         padding-top: 0px !important;
