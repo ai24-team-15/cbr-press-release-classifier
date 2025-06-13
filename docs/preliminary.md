@@ -485,6 +485,7 @@ marp: true
     .approach-list {
         list-style-type: none;
         padding-left: 0;
+        font-size: 24px;
     }
     .approach-list li {
         background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%233498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle></svg>') no-repeat left center;
@@ -774,9 +775,16 @@ marp: true
 ---
 
 <style scoped>
-    .center {
-        text-align: center;
+  section {
+        padding-top: 25px;
     }
+  h1 {
+    text-align: center;
+  }
+  .center {
+      text-align: center;
+      height: 1000px;
+  }
 </style>
 
 <h1>Инфраструктура</h1>
@@ -959,9 +967,75 @@ marp: true
 </div>
 
 ---
+<style scoped>
+  section {
+    padding: 25px;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .summary-container {
+    display: flex;
+    gap: 30px;
+    width: 100%;
+  }
+  .summary-column {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+  }
+  .summary-column h4 {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  .summary-box {
+    background-color: #f5f5f5;
+    padding: 15px;
+    font-size: 24px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    flex-grow: 1;
+  }
+  .green-box {
+    border-left: 6px solid #00aa00;
+  }
+  .red-box {
+    border-left: 6px solid #aa0000;
+  }
+  .grey-box {
+    border-left: 6px solid #444444;
+  }
+</style>
 
-# Итоги
+<h1>Итоги</h1>
 
-- Собран исходный датасет и проведен подробный исследовательский анализ.
-- Подобрана модель, показавшую достаточно высокое качество по выбранной метрике.
-- Разработаны и развернуты сервис и веб-приложение, позволяющие исследовать исходный датасет, обучать, применять и сравнивать модели.
+<div class="summary-container">
+  <div class="summary-column">
+    <h4>✅ Получилось:</h4>
+    <div class="summary-box green-box">
+      Собран исходный датасет и проведен подробный исследовательский анализ.<br>
+      Получено высокое качество с помощью классических ML моделей.<br>
+      Реализован сервис и веб-приложение.
+    </div>
+    
+  <h4>Причины удач:</h4>
+    <div class="summary-box grey-box">
+      Дружная команда<br> 
+      Четкое распределение обязанностей<br> 
+      Отсутствие "долгов".
+    </div>
+  </div>
+
+  <div class="summary-column">
+    <h4>❌ Не получилось:</h4>
+    <div class="summary-box red-box">
+      Улучшить качество с помощью DL моделей.
+    </div>
+
+  <h4>Причины неудач:</h4>
+    <div class="summary-box grey-box">
+      Мало данных для обучения глубоких нейронных сетей.
+    </div>
+  </div>
+</div>
